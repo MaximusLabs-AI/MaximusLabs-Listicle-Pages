@@ -47,6 +47,32 @@ The workbook is the source of truth for reusable agency and ranking data. Sanity
 - `pnpm studio`: run the standalone Sanity Studio development server
 - `pnpm schema:validate`: validate the complete Studio schema
 - `pnpm schema:deploy`: register the schema with the configured Sanity workspace
+- `pnpm vercel-link`: link this checkout to the existing Vercel project
+- `pnpm vercel-pull`: pull linked Vercel settings and environment variables
+- `pnpm vercel-build`: generate a local Vercel build
+- `pnpm deploy-preview`: create a Vercel preview deployment
+- `pnpm deploy-production`: deploy to Vercel production
+
+## Vercel deployment
+
+`vercel.json` locks the framework to Next.js and clears the incorrect `dist` output-directory override. Vercel will use its managed Next.js build output.
+
+The connected Vercel Git integration remains the automatic deployment path:
+
+- pushes to `main` create production deployments
+- pushes to other branches create preview deployments
+- pull requests receive Vercel previews
+
+The GitHub workflow at `.github/workflows/deploy.yml` runs the TypeScript check for every push and pull request. It also provides a manual **Run workflow** action for preview or production CLI deployments without creating duplicate automatic deployments.
+
+Before using the manual deployment job, add these GitHub repository secrets:
+
+- `VERCEL_TOKEN`
+- `VERCEL_ORG_ID`
+- `VERCEL_PROJECT_ID`
+
+Create a scoped token in Vercel. The organization and project IDs are available in `.vercel/project.json` after running `pnpm vercel-link`. Never commit that directory or any token.
+
 
 ## Schema deployment permission
 

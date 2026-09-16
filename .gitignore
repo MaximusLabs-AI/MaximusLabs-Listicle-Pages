@@ -1,6 +1,7 @@
 .env.local
 .env
 .next/
+.vercel/
 node_modules/
 .pnpm-store/
 dist/
