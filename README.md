@@ -17,7 +17,7 @@ The signed Sanity webhook values are documented in [docs/SANITY_REVALIDATION.md]
 
 ## Setup
 
-The local `.env.local` supplies the Sanity project, dataset, API version, and private tokens. Tokens must never use a `NEXT_PUBLIC_` prefix.
+The local `.env.local` supplies the Sanity project, dataset, API version, and private tokens. Tokens must never use a `NEXT_PUBLIC_` prefix. Because the production dataset is private, Vercel must also contain the server-only `SANITY_API_READ_TOKEN`; keep `SANITY_API_WRITE_TOKEN` local.
 
 ```powershell
 pnpm install
