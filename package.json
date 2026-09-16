@@ -1,0 +1,35 @@
+{
+  "name": "maximuslabs-listicle-pages",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "tsc --noEmit",
+    "studio": "sanity dev",
+    "studio:deploy": "sanity deploy",
+    "schema:validate": "sanity schema validate",
+    "schema:deploy": "sanity schemas deploy --workspace default",
+    "audit:workbook": "node scripts/audit-workbook.mjs",
+    "import:workbook": "node scripts/import-workbook.mjs"
+  },
+  "dependencies": {
+    "@sanity/client": "8.6.1",
+    "@sanity/vision": "6.13.2",
+    "dotenv": "17.4.2",
+    "next": "16.3.5",
+    "next-sanity": "13.3.4",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "sanity": "6.13.2",
+    "styled-components": "6.5.3",
+    "xlsx": "0.18.5"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "typescript": "7.0.2"
+  }
+}

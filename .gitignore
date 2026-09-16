@@ -1,0 +1,11 @@
+.env.local
+.env
+.next/
+node_modules/
+.pnpm-store/
+dist/
+.sanity/
+*.log
+*.tsbuildinfo
+_analysis/
+_workbook_edit/
