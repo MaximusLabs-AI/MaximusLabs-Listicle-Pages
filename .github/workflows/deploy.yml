@@ -74,15 +74,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Validate Vercel project access
+      - name: Validate Vercel deployment inputs
         shell: bash
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
+          [[ -n "$VERCEL_TOKEN" ]] || { echo "::error::VERCEL_TOKEN is missing."; exit 1; }
           [[ "$VERCEL_ORG_ID" =~ ^(team|user)_[A-Za-z0-9]+$ ]] || { echo "::error::VERCEL_ORG_ID must be the Vercel Team ID (team_...) or User ID (user_...)."; exit 1; }
           [[ "$VERCEL_PROJECT_ID" =~ ^prj_[A-Za-z0-9]+$ ]] || { echo "::error::VERCEL_PROJECT_ID must be the Vercel Project ID beginning with prj_."; exit 1; }
-          pnpm exec vercel whoami --token="$VERCEL_TOKEN" >/dev/null
-          pnpm exec vercel project inspect "$VERCEL_PROJECT_ID" --scope="$VERCEL_ORG_ID" --token="$VERCEL_TOKEN" >/dev/null
 
       - name: Pull preview configuration
         if: inputs.target == 'preview'
