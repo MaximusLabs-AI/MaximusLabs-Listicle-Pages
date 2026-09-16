@@ -273,9 +273,6 @@ function buildPage(tables, slug, rows) {
   return {
     _id: `listicle.${idPart(slug)}`,
     _type: 'listiclePage',
-    template: {_type: 'reference', _ref: 'listicleTemplate.default'},
-    templateVersion: '2026-09-16',
-    sourceWorkbook: 'MaximusLabs listicle feed.xlsx',
     title: pageRow.headline || ordered[0]?.listing_title,
     slug: {_type: 'slug', current: slug},
     serviceName: pageRow.service_name,
@@ -350,12 +347,10 @@ function buildTemplate(tables) {
     _id: 'listicleTemplate.default',
     _type: 'listicleTemplate',
     name: 'MaximusLabs standard listicle template',
-    templateVersion: '2026-09-16',
     publisherName: firstPage.publisher_name || 'MaximusLabs.ai',
     defaultFooterReviewNote: firstPage.footer_review_note,
     defaultFooterLinkNote: firstPage.footer_link_note,
     pagePathPrefix: '/listicles/',
-    sourceWorkbook: 'MaximusLabs listicle feed.xlsx',
     sectionOrder: objects(
       (tables.page_spec || []).sort((a, b) => numeric(a.order) - numeric(b.order)),
       'templateSection', 'section',

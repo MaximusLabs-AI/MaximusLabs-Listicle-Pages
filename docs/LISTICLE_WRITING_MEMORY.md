@@ -33,7 +33,7 @@ Every listicle uses the same ordered structure:
 14. Also considered
 15. Footer disclosures
 
-The singleton Sanity document `listicleTemplate.default` stores this section order and the workbook writing rules. Every `listiclePage` references that document. Editors change content fields, while the React template preserves the structure.
+The singleton Sanity document `listicleTemplate.default` stores this section order and the workbook writing rules. The frontend fetches it globally for every `listiclePage`; individual page documents do not expose internal template-reference fields. Editors change content fields, while the shared React template and global CSS preserve the structure and design.
 
 ## Workbook-to-Sanity mapping
 

@@ -2,6 +2,7 @@ import {visionTool} from '@sanity/vision'
 import {defineConfig} from 'sanity'
 import {structureTool} from 'sanity/structure'
 
+import {VisitSiteAction} from './sanity/actions/VisitSiteAction'
 import {schemaTypes} from './sanity/schemaTypes'
 import {structure} from './sanity/structure'
 
@@ -18,5 +19,11 @@ export default defineConfig({
     'production',
   basePath: '/studio',
   plugins: [structureTool({structure}), visionTool()],
+  document: {
+    actions: (previous, context) =>
+      context.schemaType === 'listiclePage' ? [VisitSiteAction, ...previous] : previous,
+    newDocumentOptions: (previous) =>
+      previous.filter((item) => item.templateId !== 'listicleTemplate'),
+  },
   schema: {types: schemaTypes},
 })

@@ -233,11 +233,11 @@ export function ListicleTemplate({page}: {page: RecordValue}) {
   const selected = entries.find((entry) => entry.agency?._id === profileId)
   if (selected) return <FullProfile entry={selected} verticalKey={page.verticalKey} onBack={() => setProfileId(null)} />
   return (
-    <div className={mobile ? 'mobile-preview' : ''} data-template-version={page.templateVersion || template.templateVersion}>
+    <div className={mobile ? 'mobile-preview' : ''}>
       <nav className="view-nav"><div className="wrap"><a href="#directory">Directory</a><a href="#how-we-chose">Methodology</a><a href="#compare">Compare all</a><a href="/studio">Edit in Studio</a><span><button aria-current={!mobile} onClick={() => setMobile(false)}>Desktop</button><button aria-current={mobile} onClick={() => setMobile(true)}>Mobile</button></span></div></nav>
       <main className="wrap" id="directory">
         <header className="masthead">
-          <div className="crumbs"><span>{page.publisherName || template.publisherName || 'MaximusLabs.ai'} · Agency directory · {page.verticalLabel}</span><span>Last reviewed {longDate(page.reviewedAt)} · {entries.length} firms evaluated</span></div>
+          <div className="crumbs"><span>{template.publisherName || page.publisherName || 'MaximusLabs.ai'} · Agency directory · {page.verticalLabel}</span><span>Last reviewed {longDate(page.reviewedAt)} · {entries.length} firms evaluated</span></div>
           <div className="masthead-grid"><div><h1>{page.title}</h1><p className="dek">{page.dek}</p><p className="publisher-disclosure"><b>Publisher disclosure.</b> {page.publisherDisclosure}</p><div className="score-key">{safeArray(page.assessmentKeys).map((item) => <div key={item._key || item.label}><small>{item.label}</small><p>{item.description}</p></div>)}</div></div><aside className="quick-answer"><header>Quick answer <span>Top 5 of {entries.length}</span></header><ol>{safeArray(page.quickAnswers).filter((item) => item.shown).slice(0, 5).map((item) => <li key={item._key || item.position}><a href={`#card-${item.agency?.playerId}`}>{item.displayName}</a><span>{item.reason}</span></li>)}</ol><a href="#the-list">See all {entries.length} agencies ↓</a></aside></div>
         </header>
         <div className="page-shell"><aside className="toc"><b>Contents</b><a href="#compare">The comparison</a>{entries.map((entry) => <a key={entry._key} href={`#card-${entry.agency?.playerId}`}>{entry.agency?.name}</a>)}<a href="#how-we-chose">How we chose</a>{safeArray(page.questions).map((question) => <a key={question._key || question.anchor} href={`#${question.anchor}`}>{question.title}</a>)}<a href="#also-considered">Also considered</a></aside><div className="page-body">
@@ -249,7 +249,7 @@ export function ListicleTemplate({page}: {page: RecordValue}) {
           <section className="content-section" id="also-considered"><span className="section-label">Also considered</span><h2>Which firms were researched but not ranked?</h2><p>Researched in full, below the line on this weighting.</p><div className="table-wrap"><table><thead><tr><th>Firm</th><th>Capability /70</th><th>Industry /30</th><th>Why it falls short here</th></tr></thead><tbody>{safeArray(page.alsoConsidered).map((item) => <tr key={item._key || item.playerId}><td>{item.url ? <a href={item.url} target="_blank" rel="nofollow noopener"><b>{item.name}</b></a> : <b>{item.name}</b>}<small>{item.home || item.whatTheyAre}</small></td><td>{item.capabilityScore}</td><td>{item.industryScore}</td><td>{item.reasonExcluded}</td></tr>)}</tbody></table></div></section>
         </div></div>
       </main>
-      <footer className="site-footer"><div className="wrap"><p><b>Publisher disclosure.</b> {page.publisherDisclosure}</p><p><b>On review data.</b> {page.footerReviewNote || template.defaultFooterReviewNote || 'Ratings appear only for platforms each firm is actually on.'}</p><p><b>On links.</b> {page.footerLinkNote || template.defaultFooterLinkNote || 'Every outbound link carries rel="nofollow".'}</p><p>Last reviewed {longDate(page.reviewedAt)}.</p></div></footer>
+      <footer className="site-footer"><div className="wrap"><p><b>Publisher disclosure.</b> {page.publisherDisclosure}</p><p><b>On review data.</b> {template.defaultFooterReviewNote || page.footerReviewNote || 'Ratings appear only for platforms each firm is actually on.'}</p><p><b>On links.</b> {template.defaultFooterLinkNote || page.footerLinkNote || 'Every outbound link carries rel="nofollow".'}</p><p>Last reviewed {longDate(page.reviewedAt)}.</p></div></footer>
     </div>
   )
 }

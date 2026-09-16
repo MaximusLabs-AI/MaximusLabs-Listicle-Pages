@@ -5,9 +5,6 @@ export const listiclePage = defineType({
   title: 'Listicle page',
   type: 'document',
   initialValue: {
-    template: {_type: 'reference', _ref: 'listicleTemplate.default'},
-    templateVersion: '2026-09-16',
-    sourceWorkbook: 'MaximusLabs listicle feed.xlsx',
     publisherName: 'MaximusLabs.ai',
     editorialStatus: 'needsData',
   },
@@ -19,7 +16,6 @@ export const listiclePage = defineType({
     {name: 'workflow', title: 'Workflow'},
   ],
   fields: [
-    defineField({name: 'template', title: 'Standard template', type: 'reference', to: [{type: 'listicleTemplate'}], group: 'workflow', readOnly: true, validation: (rule) => rule.required()}),
     defineField({name: 'title', title: 'Headline', type: 'string', group: 'page', validation: (rule) => rule.required()}),
     defineField({name: 'slug', title: 'Slug', type: 'slug', group: 'page', options: {source: 'title'}, validation: (rule) => rule.required()}),
     defineField({name: 'serviceName', title: 'Service name', type: 'string', group: 'page', validation: (rule) => rule.required()}),
@@ -51,8 +47,6 @@ export const listiclePage = defineType({
     defineField({name: 'footerReviewNote', title: 'Review-data footer note', type: 'text', rows: 3, group: 'page'}),
     defineField({name: 'footerLinkNote', title: 'Outbound-link footer note', type: 'text', rows: 2, group: 'page'}),
 
-    defineField({name: 'templateVersion', title: 'Template version', type: 'string', group: 'workflow', readOnly: true}),
-    defineField({name: 'sourceWorkbook', title: 'Source workbook', type: 'string', group: 'workflow', readOnly: true}),
     defineField({
       name: 'editorialStatus',
       title: 'Editorial status',

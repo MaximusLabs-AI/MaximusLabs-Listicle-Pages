@@ -2,16 +2,15 @@ import {defineArrayMember, defineField, defineType} from 'sanity'
 
 export const listicleTemplate = defineType({
   name: 'listicleTemplate',
-  title: 'Listicle template',
+  title: 'Standard listicle template',
   type: 'document',
+  description: 'Global defaults and required structure used automatically by every listicle page.',
   fields: [
     defineField({name: 'name', title: 'Template name', type: 'string', validation: (rule) => rule.required()}),
-    defineField({name: 'templateVersion', title: 'Template version', type: 'string', validation: (rule) => rule.required()}),
-    defineField({name: 'publisherName', title: 'Default publisher', type: 'string', validation: (rule) => rule.required()}),
-    defineField({name: 'defaultFooterReviewNote', title: 'Default review-data note', type: 'text', rows: 3}),
-    defineField({name: 'defaultFooterLinkNote', title: 'Default outbound-link note', type: 'text', rows: 2}),
+    defineField({name: 'publisherName', title: 'Global publisher', type: 'string', validation: (rule) => rule.required()}),
+    defineField({name: 'defaultFooterReviewNote', title: 'Global review-data note', type: 'text', rows: 3}),
+    defineField({name: 'defaultFooterLinkNote', title: 'Global outbound-link note', type: 'text', rows: 2}),
     defineField({name: 'pagePathPrefix', title: 'Page path prefix', type: 'string', validation: (rule) => rule.required()}),
-    defineField({name: 'sourceWorkbook', title: 'Source workbook', type: 'string', readOnly: true}),
     defineField({
       name: 'sectionOrder',
       title: 'Required page sections',
@@ -29,5 +28,5 @@ export const listicleTemplate = defineType({
       validation: (rule) => rule.required().min(1),
     }),
   ],
-  preview: {select: {title: 'name', subtitle: 'templateVersion'}},
+  preview: {select: {title: 'name', subtitle: 'pagePathPrefix'}},
 })

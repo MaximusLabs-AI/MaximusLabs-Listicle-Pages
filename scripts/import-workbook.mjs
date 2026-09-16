@@ -39,4 +39,4 @@ for (const batch of [[template], agencies, pages]) {
   console.log(`Committed transaction ${result.transactionId}`)
 }
 
-console.log('Sanity import complete. Workbook-complete pages are readyForReview and use listicleTemplate.default.')
+console.log('Sanity import complete. Workbook-complete pages are readyForReview and use the global listicleTemplate.default singleton.')

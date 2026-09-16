@@ -5,7 +5,7 @@ This project turns the approved Excel feed into reusable Sanity documents and re
 ## What is included
 
 - Embedded Sanity Studio at `/studio`
-- A singleton `listicleTemplate.default` document containing the required 15-section anatomy and workbook writing memory
+- A separate singleton `listicleTemplate.default` collection containing the required 15-section anatomy and workbook writing memory, fetched globally rather than stored on each page
 - Reusable `agency` and `listiclePage` schemas with workbook-to-field mappings
 - Workbook validation and idempotent Sanity import scripts
 - Dynamic `/listicles/[slug]` pages; adding a valid workbook slug creates another page on the same template
