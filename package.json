@@ -13,6 +13,7 @@
     "schema:deploy": "sanity schemas deploy --workspace default",
     "audit:workbook": "node scripts/audit-workbook.mjs",
     "import:workbook": "node scripts/import-workbook.mjs",
+    "draft:listicles": "node scripts/create-listicle-drafts.mjs",
     "vercel-link": "vercel link",
     "vercel-pull": "vercel pull --yes",
     "vercel-build": "vercel build",

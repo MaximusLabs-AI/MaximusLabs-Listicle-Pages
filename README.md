@@ -13,6 +13,8 @@ This project turns the approved Excel feed into reusable Sanity documents and re
 
 The detailed authoring rules and worksheet mapping live in [docs/LISTICLE_WRITING_MEMORY.md](./docs/LISTICLE_WRITING_MEMORY.md).
 
+The signed Sanity webhook values are documented in [docs/SANITY_REVALIDATION.md](./docs/SANITY_REVALIDATION.md). Add the same private SANITY_REVALIDATE_SECRET value to .env.local, Vercel, and the webhook secret field.
+
 ## Setup
 
 The local `.env.local` supplies the Sanity project, dataset, API version, and private tokens. Tokens must never use a `NEXT_PUBLIC_` prefix.
@@ -46,6 +48,7 @@ To create another page, add all required rows under one new `listing_slug`, run 
 - `pnpm audit:workbook`: validate joins, required page data, and template memory
 - `pnpm import:workbook`: preview the import
 - `pnpm import:workbook -- --commit`: write the template, agencies, and pages to Sanity
+- `pnpm draft:listicles -- --commit`: create or replace the two complete workbook pages as Sanity drafts
 - `pnpm studio`: run the standalone Sanity Studio development server
 - `pnpm schema:validate`: validate the complete Studio schema
 - `pnpm schema:deploy`: register the schema with the configured Sanity workspace
