@@ -12,7 +12,7 @@ const selectedSlugs = new Set([
   '10-best-aeo-agencies-b2b-saas',
 ])
 const commit = process.argv.includes('--commit')
-const {pages} = buildDocuments()
+const {pages, template} = buildDocuments()
 const drafts = pages
   .filter((page) => selectedSlugs.has(page.slug.current))
   .map((page) => ({...page, _id: `drafts.${page._id}`, editorialStatus: 'readyForReview'}))
@@ -39,7 +39,7 @@ const client = createClient({
   useCdn: false,
 })
 
-let transaction = client.transaction()
+let transaction = client.transaction().createOrReplace(template)
 for (const draft of drafts) transaction = transaction.createOrReplace(draft)
 const result = await transaction.commit({visibility: 'sync'})
-console.log(`Created or replaced ${drafts.length} drafts in transaction ${result.transactionId}.`)
+console.log(`Updated the standard template and created or replaced ${drafts.length} drafts in transaction ${result.transactionId}.`)
