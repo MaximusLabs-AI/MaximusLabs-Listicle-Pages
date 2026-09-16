@@ -227,14 +227,13 @@ function Methodology({page}: {page: RecordValue}) {
 
 export function ListicleTemplate({page}: {page: RecordValue}) {
   const [profileId, setProfileId] = useState<string | null>(null)
-  const [mobile, setMobile] = useState(false)
   const entries = useMemo(() => safeArray(page.entries).slice().sort((a, b) => a.rank - b.rank), [page.entries])
   const template = page.template || {}
   const selected = entries.find((entry) => entry.agency?._id === profileId)
   if (selected) return <FullProfile entry={selected} verticalKey={page.verticalKey} onBack={() => setProfileId(null)} />
   return (
-    <div className={mobile ? 'mobile-preview' : ''}>
-      <nav className="view-nav"><div className="wrap"><a href="#directory">Directory</a><a href="#how-we-chose">Methodology</a><a href="#compare">Compare all</a><a href="/studio">Edit in Studio</a><span><button aria-current={!mobile} onClick={() => setMobile(false)}>Desktop</button><button aria-current={mobile} onClick={() => setMobile(true)}>Mobile</button></span></div></nav>
+    <div>
+      <nav className="view-nav" aria-label="On-page navigation"><div className="wrap"><a href="#directory">Directory</a><a href="#how-we-chose">Methodology</a><a href="#compare">Compare all</a></div></nav>
       <main className="wrap" id="directory">
         <header className="masthead">
           <div className="crumbs"><span>{template.publisherName || page.publisherName || 'MaximusLabs.ai'} · Agency directory · {page.verticalLabel}</span><span>Last reviewed {longDate(page.reviewedAt)} · {entries.length} firms evaluated</span></div>

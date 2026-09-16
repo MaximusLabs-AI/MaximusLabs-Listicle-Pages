@@ -2,7 +2,13 @@
 
 :root {
   --ink: #000;
+  --navy: #001c64;
+  --navy-2: #001435;
+  --blue: #003087;
   --accent: #0070e0;
+  --sky: #449afb;
+  --grad-btn: linear-gradient(135deg,#001c64,#003087);
+  --grad-header: linear-gradient(192deg,#001435 28%,#003087);
   --paper: #fff;
   --ash: #666;
   --line: #c9c9c9;
@@ -22,9 +28,8 @@ button {color: inherit}
 
 .view-nav {position: sticky; top: 0; z-index: 30; border-bottom: 1px solid var(--ink); background: rgba(255,255,255,.97); font-family: var(--sans); font-size: 12px}
 .view-nav .wrap {display: flex; overflow-x: auto}
-.view-nav a, .view-nav button {display: block; padding: 11px 15px; border: 0; border-right: 1px solid var(--hair); background: transparent; text-decoration: none; white-space: nowrap; cursor: pointer}
-.view-nav span {display: flex; margin-left: auto}
-.view-nav button[aria-current='true'] {background: var(--ink); color: var(--paper)}
+.view-nav a {display: block; padding: 11px 15px; border-right: 1px solid var(--hair); background: transparent; text-decoration: none; white-space: nowrap}
+.view-nav a:hover, .view-nav a:focus-visible {color: var(--accent)}
 
 .masthead {padding: 28px 0 18px; border-bottom: 2px solid var(--ink)}
 .crumbs {display: flex; justify-content: space-between; gap: 16px; color: var(--ash); font: 12px/1.4 var(--sans)}
@@ -39,8 +44,8 @@ button {color: inherit}
 .score-key p {margin: 4px 0 0; font: 12.5px/1.45 var(--sans)}
 
 .quick-answer {border: 1px solid var(--ink)}
-.quick-answer header {display: flex; justify-content: space-between; padding: 10px 12px; background: var(--ink); color: var(--paper); font: 700 11px var(--sans); letter-spacing: .07em; text-transform: uppercase}
-.quick-answer header span {color: #bbb; font-weight: 500}
+.quick-answer header {display: flex; justify-content: space-between; padding: 10px 12px; background: var(--grad-header); color: var(--paper); font: 700 11px var(--sans); letter-spacing: .07em; text-transform: uppercase}
+.quick-answer header span {color: #c8dbf5; font-weight: 500}
 .quick-answer ol {margin: 0; padding: 4px 14px 4px 32px}
 .quick-answer li {padding: 10px 0; border-top: 1px solid var(--hair)}
 .quick-answer li:first-child {border-top: 0}
@@ -50,7 +55,7 @@ button {color: inherit}
 
 .page-shell {display: grid; grid-template-columns: 236px minmax(0,1fr); gap: 36px; align-items: start; margin-top: 22px}
 .toc {position: sticky; top: 58px; display: flex; max-height: calc(100vh - 80px); overflow-y: auto; border: 1px solid var(--ink); flex-direction: column; font: 12px/1.35 var(--sans)}
-.toc b {padding: 10px 12px; background: var(--ink); color: var(--paper); letter-spacing: .07em; text-transform: uppercase}
+.toc b {padding: 10px 12px; background: var(--grad-header); color: var(--paper); letter-spacing: .07em; text-transform: uppercase}
 .toc a {padding: 7px 12px; border-top: 1px solid var(--hair); color: #444; text-decoration: none}
 .toc a:hover {color: var(--accent)}
 .page-body {min-width: 0}
@@ -76,7 +81,7 @@ button {color: inherit}
 .meta-grid div:last-child {border-right: 0}
 dt {color: var(--ash); font: 700 10.5px var(--sans)}
 dd {margin: 2px 0 0}
-.clients {font: 12.5px var(--sans)}
+.card-identity > .clients {margin: 16px 0 0; font: 12.5px var(--sans)}
 .scorebox {width: 210px; padding: 10px 12px; border: 1px solid var(--line); flex: none; font-family: var(--sans)}
 .scorebox p {display: flex; justify-content: space-between; gap: 12px; margin: 0; padding: 6px 0; border-bottom: 1px solid var(--hair); font-size: 11.5px}
 .scorebox p:last-child {border-bottom: 0}
@@ -92,7 +97,7 @@ dd {margin: 2px 0 0}
 .vertical-tabs {display: grid; grid-template-columns: 200px minmax(0,1fr)}
 .tab-rail {display: flex; border-right: 1px solid var(--hair); background: var(--fill); flex-direction: column}
 .tab-rail button {padding: 11px 14px; border: 0; border-bottom: 1px solid var(--hair); background: transparent; color: #444; text-align: left; font: 12.5px var(--sans); cursor: pointer}
-.tab-rail button[aria-selected='true'] {background: var(--paper); color: var(--ink); font-weight: 700; box-shadow: inset 3px 0 0 var(--ink)}
+.tab-rail button[aria-selected='true'] {background: var(--paper); color: var(--navy); font-weight: 700; box-shadow: inset 3px 0 0 var(--accent)}
 .tab-panel {min-width: 0; padding: 16px 18px}
 .tab-panel h4, .profile-section h4 {margin: 20px 0 6px; font: 700 12.5px var(--sans)}
 .panel-lead {max-width: 74ch; margin-top: 0}
@@ -100,7 +105,8 @@ dd {margin: 2px 0 0}
 .card-foot p {max-width: 64ch; margin: 0}
 .card-foot div {display: flex; gap: 8px; flex: none}
 .button {display: inline-block; padding: 7px 14px; border: 1px solid var(--ink); background: var(--paper); color: var(--ink); font: 600 12.5px var(--sans); text-decoration: none; cursor: pointer}
-.button.solid {background: var(--ink); color: var(--paper)}
+.button.solid {border-color: var(--navy); background: var(--grad-btn); color: var(--paper)}
+.button.solid:hover, .button.solid:focus-visible {filter: brightness(1.1)}
 
 .definition-list {display: grid; grid-template-columns: 180px minmax(0,1fr); margin: 0}
 .definition-list dt, .definition-list dd {padding: 7px 12px 7px 0; border-top: 1px solid var(--hair)}
@@ -163,19 +169,15 @@ td ul {margin: 0; padding-left: 16px}
 .index-list > a {display: flex; justify-content: space-between; gap: 20px; padding: 16px 0; border-bottom: 1px solid var(--hair); text-decoration: none}
 .index-list span {color: var(--ash); font: 12px var(--sans)}
 
-.mobile-preview {width: 430px; max-width: 100%; margin: 0 auto; border-right: 1px solid var(--hair); border-left: 1px solid var(--hair)}
-.mobile-preview .wrap {width: calc(100% - 28px)}
-.mobile-preview .masthead-grid, .mobile-preview .page-shell, .mobile-preview .vertical-tabs, .mobile-preview .case > div, .mobile-preview .score-key, .mobile-preview .meta-grid, .mobile-preview .verdict-grid, .mobile-preview .portfolio-grid {grid-template-columns: 1fr}
-.mobile-preview .toc {display: none}
-.mobile-preview .card-head {flex-wrap: wrap}
-.mobile-preview .scorebox {width: 100%}
-.mobile-preview .tab-rail {border-right: 0; border-bottom: 1px solid var(--hair)}
-.mobile-preview .ratestrip {grid-template-columns: 1fr !important}
-
 @media (max-width: 900px) {
-  .wrap {width: min(100% - 28px, 760px)}
+  body {overflow-x: hidden}
+  .wrap {width: calc(100% - 28px); max-width: 760px}
+  .view-nav .wrap {width: 100%; max-width: none; margin: 0}
+  .crumbs {flex-direction: column; gap: 4px}
   .masthead-grid, .page-shell {grid-template-columns: 1fr}
-  .toc {position: static; max-height: none}
+  .masthead-grid > *, .page-shell > * {min-width: 0}
+  .masthead h1 {max-width: none; overflow-wrap: break-word}
+  .toc {display: none}
   .score-key, .meta-grid, .vertical-tabs, .case > div, .verdict-grid, .portfolio-grid {grid-template-columns: 1fr}
   .card-head {flex-wrap: wrap}
   .scorebox {width: 100%}
