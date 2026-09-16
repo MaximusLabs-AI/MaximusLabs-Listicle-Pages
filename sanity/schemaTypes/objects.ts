@@ -308,6 +308,32 @@ export const alsoConsideredItem = defineType({
   preview: {select: {title: 'name', subtitle: 'reasonExcluded'}},
 })
 
+export const templateSection = defineType({
+  name: 'templateSection',
+  title: 'Template section',
+  type: 'object',
+  fields: [
+    defineField({name: 'order', title: 'Order', type: 'number', validation: (rule) => rule.required().integer().positive()}),
+    requiredString('name', 'Section'),
+    defineField({name: 'content', title: 'What it contains', type: 'text', rows: 3}),
+  ],
+  preview: {select: {title: 'name', subtitle: 'content'}},
+})
+
+export const writingRule = defineType({
+  name: 'writingRule',
+  title: 'Writing rule',
+  type: 'object',
+  fields: [
+    requiredString('scope', 'Scope'),
+    defineField({name: 'order', title: 'Order', type: 'number'}),
+    defineField({name: 'instruction', title: 'Instruction', type: 'text', rows: 3, validation: (rule) => rule.required()}),
+    defineField({name: 'sanityTarget', title: 'Sanity target', type: 'string'}),
+    defineField({name: 'sourceTab', title: 'Source worksheet', type: 'string'}),
+    defineField({name: 'required', title: 'Required', type: 'boolean', initialValue: true}),
+  ],
+  preview: {select: {title: 'instruction', subtitle: 'sanityTarget'}},
+})
 export const objectTypes = [
   pricing,
   buyerTrust,
@@ -327,4 +353,6 @@ export const objectTypes = [
   methodologyStep,
   questionSection,
   alsoConsideredItem,
+  templateSection,
+  writingRule,
 ]

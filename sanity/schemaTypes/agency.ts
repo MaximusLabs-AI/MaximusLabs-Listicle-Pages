@@ -37,6 +37,7 @@ export const agency = defineType({
     defineField({name: 'ratings', title: 'Ratings', type: 'array', of: [defineArrayMember({type: 'rating'})], group: 'proof'}),
     defineField({name: 'reviews', title: 'Customer reviews', type: 'array', of: [defineArrayMember({type: 'customerReview'})], group: 'proof'}),
     defineField({name: 'reviewNote', title: 'Review evidence note', type: 'text', rows: 4, group: 'proof'}),
+    defineField({name: 'reviewNoteSourceUrl', title: 'Review evidence source', type: 'url', group: 'proof'}),
     defineField({name: 'caseStudies', title: 'Case studies', type: 'array', of: [defineArrayMember({type: 'caseStudy'})], group: 'proof'}),
     defineField({name: 'portfolio', title: 'Portfolio', type: 'array', of: [defineArrayMember({type: 'portfolioItem'})], group: 'proof'}),
 

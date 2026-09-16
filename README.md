@@ -1,19 +1,21 @@
 # MaximusLabs Listicle Pages
 
-This project turns the supplied Excel feed into reusable Sanity documents and renders them through a Next.js template based on the supplied sample HTML.
+This project turns the approved Excel feed into reusable Sanity documents and renders every page through one fixed Next.js listicle template based on the supplied sample HTML.
 
 ## What is included
 
 - Embedded Sanity Studio at `/studio`
-- `agency` and `listiclePage` schemas with reusable object types
-- Workbook audit and dry-run import scripts
-- Idempotent Sanity import using stable document IDs
-- Dynamic `/listicles/[slug]` pages with the sample directory, comparison, cards, profile, methodology, service matrix, questions, and also-considered structure
+- A singleton `listicleTemplate.default` document containing the required 15-section anatomy and workbook writing memory
+- Reusable `agency` and `listiclePage` schemas with workbook-to-field mappings
+- Workbook validation and idempotent Sanity import scripts
+- Dynamic `/listicles/[slug]` pages; adding a valid workbook slug creates another page on the same template
 - Desktop and mobile preview controls
+
+The detailed authoring rules and worksheet mapping live in [docs/LISTICLE_WRITING_MEMORY.md](./docs/LISTICLE_WRITING_MEMORY.md).
 
 ## Setup
 
-The existing `.env.local` supplies the Sanity project, dataset, API version, and private tokens. Tokens must never use a `NEXT_PUBLIC_` prefix.
+The local `.env.local` supplies the Sanity project, dataset, API version, and private tokens. Tokens must never use a `NEXT_PUBLIC_` prefix.
 
 ```powershell
 pnpm install
@@ -22,28 +24,28 @@ pnpm import:workbook
 pnpm dev
 ```
 
-`pnpm import:workbook` is a dry run. After reviewing [DATA_AUDIT.md](./DATA_AUDIT.md), write the documents to Sanity with:
+`pnpm import:workbook` is a dry run. When the audit reports zero warnings, write the singleton template, agencies, and pages to Sanity with:
 
 ```powershell
 pnpm import:workbook -- --commit
 ```
 
-The importer uses stable IDs such as `agency.maximuslabs` and `listicle.10-best-aeo-agencies-cybersecurity`, so a later import updates the same documents instead of creating duplicates.
+Stable IDs such as `listicleTemplate.default`, `agency.maximuslabs`, and `listicle.10-best-aeo-agencies-cybersecurity` make every later import an update rather than a duplicate.
 
 ## Editorial workflow
 
-Imported listicle pages intentionally start as `Needs data`. Complete the warnings shown in the Sanity workflow group, review the rendered page, and then change the status to `Approved`.
+The workbook is the source of truth for agency data, page copy, methodology, questions, SEO, and template-writing rules. A complete imported page starts as `Ready for review`. Review the rendered page in the browser, then change its status to `Approved` in Studio.
 
-The workbook is the source of truth for reusable agency and ranking data. Sanity is the source of truth for page-level editorial copy that the workbook does not currently contain.
+To create another page, add all required rows under one new `listing_slug`, run the audit, and import. The homepage and dynamic route discover the new Sanity document automatically.
 
 ## Commands
 
 - `pnpm dev`: run the Next.js site and embedded Studio
 - `pnpm build`: production build
 - `pnpm lint`: TypeScript check
-- `pnpm audit:workbook`: validate joins and report missing page data
-- `pnpm import:workbook`: prepare a dry run
-- `pnpm import:workbook -- --commit`: write published documents to Sanity
+- `pnpm audit:workbook`: validate joins, required page data, and template memory
+- `pnpm import:workbook`: preview the import
+- `pnpm import:workbook -- --commit`: write the template, agencies, and pages to Sanity
 - `pnpm studio`: run the standalone Sanity Studio development server
 - `pnpm schema:validate`: validate the complete Studio schema
 - `pnpm schema:deploy`: register the schema with the configured Sanity workspace
@@ -55,29 +57,10 @@ The workbook is the source of truth for reusable agency and ranking data. Sanity
 
 ## Vercel deployment
 
-`vercel.json` locks the framework to Next.js and clears the incorrect `dist` output-directory override. Vercel will use its managed Next.js build output.
+`vercel.json` locks the framework to Next.js and clears the incorrect `dist` output-directory override. The connected Vercel Git integration creates production deployments from `main` and preview deployments from other branches and pull requests.
 
-The connected Vercel Git integration remains the automatic deployment path:
-
-- pushes to `main` create production deployments
-- pushes to other branches create preview deployments
-- pull requests receive Vercel previews
-
-The GitHub workflow at `.github/workflows/deploy.yml` runs the TypeScript check for every push and pull request. It also provides a manual **Run workflow** action for preview or production CLI deployments without creating duplicate automatic deployments.
-
-Before using the manual deployment job, add these GitHub repository secrets:
-
-- `VERCEL_TOKEN`
-- `VERCEL_ORG_ID`
-- `VERCEL_PROJECT_ID`
-
-Create a scoped token in Vercel. The organization and project IDs are available in `.vercel/project.json` after running `pnpm vercel-link`. Never commit that directory or any token.
-
+The GitHub workflow at `.github/workflows/deploy.yml` runs the TypeScript check for every push and pull request and provides a manual preview or production CLI deployment. Its repository secrets are `VERCEL_TOKEN`, `VERCEL_ORG_ID`, and `VERCEL_PROJECT_ID`.
 
 ## Schema deployment permission
 
-The supplied Viewer and Editor tokens are sufficient for reading content and importing documents. Sanity schema registration is a separate management operation and requires a token or logged-in user with `Deploy Studio` / `deploySchema` permission (normally Developer or an appropriately scoped custom role).
-
-The current tokens do not have that permission, so the schema is complete and available in the local embedded Studio but has not been registered in the remote Sanity workspace. After supplying an authorized token as `SANITY_AUTH_TOKEN`, run `pnpm schema:deploy`.
-
-No workbook documents have been written to the production dataset. The importer remains dry-run by default because the audit identifies publish-blocking editorial gaps.
+Viewer and Editor content tokens can read and import documents. Remote schema registration separately requires `Deploy Studio` / `deploySchema` permission. The schema remains fully available in the embedded Studio even if the current token cannot register it remotely.

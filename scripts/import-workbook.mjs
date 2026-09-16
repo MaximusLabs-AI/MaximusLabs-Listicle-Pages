@@ -8,20 +8,21 @@ import {buildDocuments, root} from './workbook-data.mjs'
 dotenv.config({path: path.join(root, '.env.local')})
 
 const commit = process.argv.includes('--commit')
-const {agencies, pages} = buildDocuments()
+const {agencies, template, pages} = buildDocuments()
 
-console.log(`Prepared ${agencies.length} agency documents and ${pages.length} listicle documents.`)
+console.log(`Prepared ${agencies.length} agencies, 1 standard template, and ${pages.length} listicle pages.`)
 for (const page of pages) {
   console.log(`${page._id}: ${page.entries.length} ranked entries, ${page.dataWarnings.length} warnings, status=${page.editorialStatus}`)
 }
 
 if (!commit) {
-  console.log('\nDry run only. Re-run with --commit after reviewing DATA_AUDIT.md to write these published documents to Sanity.')
+  console.log('\nDry run only. Re-run with --commit to create or update the standard template, agencies, and listicle pages in Sanity.')
   process.exit(0)
 }
 
 const token = process.env.SANITY_API_WRITE_TOKEN || process.env.SANITY_API_TOKEN
 if (!token) throw new Error('SANITY_API_WRITE_TOKEN is required for --commit.')
+if (pages.some((page) => page.dataWarnings.length)) throw new Error('Import stopped because one or more pages still have workbook warnings.')
 
 const client = createClient({
   projectId: process.env.SANITY_PROJECT_ID || process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
@@ -31,11 +32,11 @@ const client = createClient({
   useCdn: false,
 })
 
-for (const batch of [agencies, pages]) {
+for (const batch of [[template], agencies, pages]) {
   let transaction = client.transaction()
   for (const document of batch) transaction = transaction.createOrReplace(document)
-  const result = await transaction.commit({visibility: 'async'})
+  const result = await transaction.commit({visibility: 'sync'})
   console.log(`Committed transaction ${result.transactionId}`)
 }
 
-console.log('Sanity import complete. All listicle pages remain editorialStatus=needsData until the audit gaps are filled and reviewed.')
+console.log('Sanity import complete. Workbook-complete pages are readyForReview and use listicleTemplate.default.')

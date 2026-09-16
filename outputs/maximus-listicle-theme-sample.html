@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MaximusLabs Listicle Theme Sample</title>
+  <link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700,800,900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #001c64;
+      --navy-2: #001435;
+      --ink: #1e3251;
+      --blue: #003087;
+      --accent: #0070e0;
+      --sky: #449afb;
+      --bg: #f3f3f6;
+      --paper: #ffffff;
+      --text: #333333;
+      --text-2: #555555;
+      --muted: #666666;
+      --line: #e2e2e2;
+      --line-2: #eef0f4;
+      --subtle: #3d4d740f;
+      --success: #0f8b5f;
+      --grad-cover: linear-gradient(160deg,#001129 0%,#001c64 55%,#003087 100%);
+      --grad-header: linear-gradient(192deg,#001435 28%,#003087);
+      --grad-btn: linear-gradient(135deg,#001c64,#003087);
+      --grad-light: linear-gradient(90deg,#0070e0,#449afb);
+      --shadow-page: 0 8px 40px rgba(0,28,100,.10);
+      --shadow-card: 0 1px 4px rgba(0,0,0,.05);
+      --shadow-pop: 0 4px 24px rgba(0,28,100,.08);
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--accent); }
+    button { font: inherit; }
+    .wrap { width: min(1240px, calc(100% - 48px)); margin: 0 auto; }
+    .tnum { font-variant-numeric: tabular-nums; }
+
+    .brand-symbols { position: absolute; width: 0; height: 0; overflow: hidden; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: rgba(0,20,53,.96);
+      border-bottom: 1px solid rgba(255,255,255,.12);
+      color: white;
+      backdrop-filter: blur(12px);
+    }
+    .topbar .wrap { min-height: 58px; display: flex; align-items: center; gap: 28px; }
+    .brand { display: inline-flex; align-items: center; gap: 11px; color: white; text-decoration: none; font-weight: 800; letter-spacing: -.02em; }
+    .brand svg { width: 30px; height: 30px; }
+    .brand span { font-size: 18px; }
+    .nav-links { display: flex; gap: 22px; margin-left: auto; }
+    .nav-links a { color: #c8dbf5; text-decoration: none; font-size: 13px; font-weight: 600; }
+    .nav-links a:hover { color: white; }
+    .preview-toggle { display: inline-flex; padding: 3px; border: 1px solid rgba(255,255,255,.16); border-radius: 999px; background: rgba(255,255,255,.06); }
+    .preview-toggle button { padding: 5px 11px; border: 0; border-radius: 999px; background: transparent; color: #9fc3f5; font-size: 12px; cursor: pointer; }
+    .preview-toggle button.active { background: white; color: var(--navy); font-weight: 700; }
+
+    .hero { position: relative; overflow: hidden; background: var(--grad-cover); color: white; }
+    .hero .motif { position: absolute; right: -110px; top: -110px; width: 510px; height: 510px; opacity: .055; transform: rotate(15deg); pointer-events: none; }
+    .hero .motif-2 { position: absolute; left: -170px; bottom: -280px; width: 430px; height: 430px; opacity: .035; transform: rotate(-17deg); pointer-events: none; }
+    .hero-inner { position: relative; z-index: 1; padding: 74px 0 58px; }
+    .crumbs { display: flex; justify-content: space-between; gap: 20px; color: #9fc3f5; font-size: 12px; font-weight: 600; }
+    .hero-grid { display: grid; grid-template-columns: minmax(0,1fr) 350px; gap: 56px; align-items: end; margin-top: 40px; }
+    .eyebrow { margin: 0 0 18px; color: var(--sky); font-size: 11.5px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { max-width: 17ch; margin-bottom: 20px; font-size: clamp(42px,6vw,72px); font-weight: 900; letter-spacing: -.03em; line-height: .99; }
+    .hero .dek { max-width: 61ch; margin-bottom: 28px; color: #c8dbf5; font-size: 17px; font-weight: 500; line-height: 1.58; }
+    .disclosure { max-width: 74ch; margin: 0; padding: 13px 15px; border-left: 3px solid var(--sky); background: rgba(68,154,251,.08); color: #dceaff; font-size: 12.5px; }
+
+    .quick-answer { overflow: hidden; border: 1px solid rgba(255,255,255,.18); border-radius: var(--radius); background: rgba(0,17,41,.52); box-shadow: var(--shadow-pop); backdrop-filter: blur(12px); }
+    .quick-answer header { display: flex; justify-content: space-between; padding: 13px 16px; border-bottom: 1px solid rgba(255,255,255,.14); color: white; font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+    .quick-answer header span { color: #9fc3f5; letter-spacing: 0; text-transform: none; }
+    .quick-answer ol { margin: 0; padding: 4px 16px 4px 46px; }
+    .quick-answer li { padding: 12px 0; border-top: 1px solid rgba(255,255,255,.1); color: var(--sky); font-variant-numeric: tabular-nums; }
+    .quick-answer li:first-child { border-top: 0; }
+    .quick-answer a { color: white; font-weight: 700; text-decoration: none; }
+    .quick-answer li span { display: block; margin-top: 2px; color: #9fc3f5; font-size: 11.5px; line-height: 1.4; }
+    .quick-answer > a { display: block; padding: 12px 16px; border-top: 1px solid rgba(255,255,255,.14); color: var(--sky); font-size: 12px; font-weight: 700; }
+
+    .score-key { position: relative; z-index: 2; display: grid; grid-template-columns: repeat(3,1fr); margin-top: -1px; border-radius: 0 0 var(--radius) var(--radius); background: white; box-shadow: var(--shadow-page); }
+    .score-key div { padding: 22px 24px; border-right: 1px solid var(--line); }
+    .score-key div:last-child { border-right: 0; }
+    .score-key small, .section-label { display: block; margin-bottom: 5px; color: var(--accent); font-size: 10.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+    .score-key p { margin: 0; color: var(--text-2); font-size: 13px; }
+
+    .page-shell { display: grid; grid-template-columns: 230px minmax(0,1fr); gap: 32px; align-items: start; padding: 42px 0 72px; }
+    .toc { position: sticky; top: 82px; overflow: hidden; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); box-shadow: var(--shadow-card); }
+    .toc strong { display: block; padding: 13px 15px; background: var(--grad-header); color: white; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
+    .toc a { display: flex; gap: 9px; padding: 9px 14px; border-top: 1px solid var(--line-2); color: var(--text-2); text-decoration: none; font-size: 12px; font-weight: 500; }
+    .toc a::before { color: var(--sky); content: attr(data-num); font-weight: 800; }
+    .toc a:hover { background: var(--subtle); color: var(--navy); }
+    .page-body { min-width: 0; }
+
+    .content-section, .agency-card { margin-bottom: 26px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--paper); box-shadow: var(--shadow-card); scroll-margin-top: 84px; }
+    .content-section { padding: 28px 30px; }
+    .content-section h2 { margin: 5px 0 9px; color: var(--navy); font-size: 30px; font-weight: 900; letter-spacing: -.02em; line-height: 1.18; }
+    .content-section > p { max-width: 76ch; color: var(--text-2); }
+    .accent-rule { width: 54px; height: 3px; margin: 17px 0 25px; border: 0; background: var(--grad-light); }
+    .section-top { display: flex; justify-content: space-between; gap: 16px; align-items: end; }
+    .section-top .pill { flex: none; }
+    .pill { display: inline-flex; align-items: center; padding: 5px 9px; border-radius: 999px; background: rgba(0,112,224,.09); color: var(--blue); font-size: 11px; font-weight: 700; }
+
+    .table-wrap { max-width: 100%; overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { min-width: 124px; padding: 11px 12px; border-bottom: 1px solid var(--line-2); text-align: left; vertical-align: top; }
+    th { background: var(--navy); color: white; font-size: 10.5px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; white-space: nowrap; }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:hover td { background: var(--subtle); }
+    td:first-child { color: var(--ink); }
+    td small { display: block; color: var(--muted); font-size: 11px; }
+    td b { color: var(--ink); }
+
+    .list-head { display: flex; justify-content: space-between; gap: 14px; margin: 34px 0 12px; color: var(--muted); font-size: 12px; }
+    .list-head strong { color: var(--navy); }
+    .agency-card { overflow: hidden; }
+    .card-head { display: grid; grid-template-columns: 58px minmax(0,1fr) 205px; gap: 18px; align-items: start; padding: 24px; }
+    .rank { display: grid; width: 52px; height: 52px; place-items: center; border-radius: 12px; background: var(--grad-btn); color: white; font-size: 27px; font-weight: 900; line-height: 1; box-shadow: 0 7px 18px rgba(0,48,135,.18); }
+    .card-identity h2 { margin: 0 0 5px; color: var(--navy); font-size: 25px; font-weight: 900; letter-spacing: -.02em; }
+    .card-identity h2 small { margin-left: 8px; color: var(--muted); font-size: 11.5px; font-weight: 500; }
+    .card-identity > p { max-width: 68ch; margin-bottom: 14px; color: var(--text-2); }
+    .meta-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); margin: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 8px; }
+    .meta-grid div { min-width: 0; padding: 8px 10px; border-right: 1px solid var(--line-2); }
+    .meta-grid div:last-child { border-right: 0; }
+    dt { color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+    dd { margin: 2px 0 0; color: var(--ink); font-size: 12px; font-weight: 600; }
+    .clients { margin: 10px 0 0; font-size: 12.5px; }
+    .scorebox { overflow: hidden; border: 1px solid var(--line); border-radius: 10px; background: var(--subtle); }
+    .scorebox .score-title { padding: 9px 11px; background: var(--navy); color: white; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+    .scorebox p { display: flex; justify-content: space-between; gap: 10px; margin: 0; padding: 8px 11px; border-bottom: 1px solid var(--line); color: var(--text-2); font-size: 11.5px; }
+    .scorebox p:last-child { border-bottom: 0; }
+    .scorebox b { color: var(--navy); font-variant-numeric: tabular-nums; }
+
+    .ratestrip { display: grid; grid-template-columns: repeat(3,1fr); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: #fbfcfe; }
+    .ratestrip div { padding: 10px 18px; border-right: 1px solid var(--line-2); }
+    .ratestrip div:last-child { border-right: 0; }
+    .ratestrip span, .ratestrip small { display: block; }
+    .ratestrip span { color: var(--muted); font-size: 10px; font-weight: 700; text-transform: uppercase; }
+    .ratestrip strong { color: var(--navy); font-size: 17px; font-variant-numeric: tabular-nums; }
+    .ratestrip small { color: var(--text-2); font-size: 11px; }
+
+    .vertical-tabs { display: grid; grid-template-columns: 192px minmax(0,1fr); min-height: 226px; }
+    .tab-rail { display: flex; flex-direction: column; border-right: 1px solid var(--line); background: #f8f9fc; }
+    .tab-rail button { padding: 12px 15px; border: 0; border-bottom: 1px solid var(--line-2); background: transparent; color: var(--text-2); text-align: left; font-size: 12px; cursor: pointer; }
+    .tab-rail button:hover { color: var(--navy); }
+    .tab-rail button[aria-selected="true"] { background: white; color: var(--navy); font-weight: 700; box-shadow: inset 3px 0 0 var(--accent); }
+    .tab-panel { padding: 20px 22px; }
+    .tab-panel[hidden] { display: none; }
+    .definition-list { display: grid; grid-template-columns: 175px minmax(0,1fr); margin: 0; }
+    .definition-list dt, .definition-list dd { padding: 9px 0; border-top: 1px solid var(--line-2); }
+    .definition-list dt:first-of-type, .definition-list dt:first-of-type + dd { border-top: 0; }
+    .definition-list dd { font-size: 13px; font-weight: 400; }
+    .cap-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; }
+    .cap-grid div { padding: 13px; border: 1px solid var(--line); border-radius: 9px; }
+    .cap-grid b { display: block; color: var(--navy); }
+    .cap-grid span { color: var(--text-2); font-size: 12px; }
+    .review { padding: 14px 15px; border-left: 3px solid var(--sky); background: var(--subtle); }
+    .review p { margin-bottom: 6px; color: var(--ink); font-weight: 600; }
+    .review small { color: var(--muted); }
+    .card-foot { display: flex; justify-content: space-between; gap: 16px; align-items: center; padding: 14px 22px; border-top: 1px solid var(--line); background: #fbfcfe; }
+    .card-foot p { margin: 0; color: var(--text-2); font-size: 12.5px; }
+    .card-actions { display: flex; gap: 8px; flex: none; }
+    .button { display: inline-flex; justify-content: center; align-items: center; padding: 8px 14px; border: 1px solid var(--navy); border-radius: 7px; background: white; color: var(--navy); font-size: 12px; font-weight: 700; text-decoration: none; cursor: pointer; }
+    .button:hover { border-color: var(--accent); color: var(--accent); }
+    .button.solid { border-color: transparent; background: var(--grad-btn); color: white; }
+
+    .method-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; counter-reset: method; }
+    .method-grid article { position: relative; padding: 20px 16px 16px; border: 1px solid var(--line); border-radius: 10px; background: white; counter-increment: method; }
+    .method-grid article::before { position: absolute; top: 12px; right: 13px; color: rgba(0,112,224,.12); content: counter(method, decimal-leading-zero); font-size: 33px; font-weight: 900; line-height: 1; }
+    .method-grid h3 { position: relative; margin: 23px 0 5px; color: var(--navy); font-size: 16px; }
+    .method-grid p { margin: 0; color: var(--text-2); font-size: 12.5px; }
+
+    .brand-note { position: relative; overflow: hidden; margin-top: 26px; padding: 25px 28px; border-radius: 12px; background: var(--grad-header); color: white; }
+    .brand-note svg { position: absolute; right: -55px; bottom: -65px; width: 190px; height: 190px; opacity: .06; transform: rotate(14deg); }
+    .brand-note b { color: var(--sky); }
+    .brand-note p { position: relative; max-width: 73ch; margin: 0; color: #c8dbf5; }
+
+    .footer { position: relative; overflow: hidden; padding: 58px 0; background: var(--grad-cover); color: white; }
+    .footer .motif { position: absolute; left: -100px; top: -120px; width: 350px; height: 350px; opacity: .045; transform: rotate(-14deg); }
+    .footer-grid { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 50px; }
+    .footer h2 { margin-bottom: 12px; font-size: 30px; font-weight: 900; letter-spacing: -.02em; }
+    .footer p { max-width: 60ch; color: #c8dbf5; }
+    .palette { display: grid; grid-template-columns: repeat(6,1fr); overflow: hidden; border: 1px solid rgba(255,255,255,.15); border-radius: 10px; }
+    .swatch { min-height: 92px; display: flex; align-items: end; padding: 8px; font-size: 9.5px; font-weight: 700; }
+    .swatch:nth-child(1) { background: #001435; }
+    .swatch:nth-child(2) { background: #001c64; }
+    .swatch:nth-child(3) { background: #003087; }
+    .swatch:nth-child(4) { background: #0070e0; }
+    .swatch:nth-child(5) { background: #449afb; }
+    .swatch:nth-child(6) { background: #f3f3f6; color: var(--navy); }
+
+    .mobile-preview { width: 430px; max-width: 100%; margin: 0 auto; box-shadow: 0 0 0 1px var(--line), var(--shadow-page); }
+    .mobile-preview .wrap { width: calc(100% - 28px); }
+    .mobile-preview .nav-links { display: none; }
+    .mobile-preview .hero-inner { padding: 44px 0; }
+    .mobile-preview .hero-grid, .mobile-preview .score-key, .mobile-preview .page-shell, .mobile-preview .card-head, .mobile-preview .meta-grid, .mobile-preview .vertical-tabs, .mobile-preview .method-grid, .mobile-preview .footer-grid { grid-template-columns: 1fr; }
+    .mobile-preview .quick-answer { margin-top: 6px; }
+    .mobile-preview .score-key div { border-right: 0; border-bottom: 1px solid var(--line); }
+    .mobile-preview .toc { display: none; }
+    .mobile-preview .scorebox { width: 100%; }
+    .mobile-preview .ratestrip { grid-template-columns: 1fr; }
+    .mobile-preview .ratestrip div { border-right: 0; border-bottom: 1px solid var(--line-2); }
+    .mobile-preview .tab-rail { border-right: 0; border-bottom: 1px solid var(--line); }
+    .mobile-preview .definition-list { grid-template-columns: 1fr; }
+    .mobile-preview .card-foot { align-items: stretch; flex-direction: column; }
+    .mobile-preview .card-actions { flex-direction: column; }
+
+    @media (max-width: 900px) {
+      .wrap { width: min(100% - 28px,760px); }
+      .nav-links { display: none; }
+      .hero-inner { padding: 48px 0; }
+      .crumbs span:last-child { display: none; }
+      .hero-grid, .page-shell, .card-head, .vertical-tabs, .footer-grid { grid-template-columns: 1fr; }
+      .score-key, .meta-grid, .method-grid { grid-template-columns: 1fr; }
+      .score-key div, .meta-grid div { border-right: 0; border-bottom: 1px solid var(--line); }
+      .toc { display: none; }
+      .scorebox { width: 100%; }
+      .tab-rail { border-right: 0; border-bottom: 1px solid var(--line); }
+      .definition-list { grid-template-columns: 1fr; }
+      .card-foot { align-items: stretch; flex-direction: column; }
+    }
+
+    @media (max-width: 560px) {
+      .preview-toggle { margin-left: auto; }
+      .preview-toggle button:first-child { display: none; }
+      h1 { font-size: 42px; }
+      .hero-grid { gap: 30px; }
+      .content-section { padding: 22px 18px; }
+      .content-section h2 { font-size: 26px; }
+      .ratestrip { grid-template-columns: 1fr; }
+      .ratestrip div { border-right: 0; border-bottom: 1px solid var(--line-2); }
+      .cap-grid, .palette { grid-template-columns: repeat(2,1fr); }
+      .card-actions { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <svg class="brand-symbols" aria-hidden="true" focusable="false">
+    <symbol id="ml-mark" viewBox="0 0 48 48">
+      <path d="M37 23.9998H30.064C26.715 23.9998 24 26.7148 24 30.0638V47.4268C24 47.6458 24.26 47.7598 24.421 47.6108L37 35.9998V23.9998Z" fill="#449AFB"/>
+      <path d="M36.9995 24H30.0635C28.6275 24 27.3085 24.499 26.2695 25.333L36.9995 36V24Z" fill="#003087"/>
+      <path d="M11 24H17.936C21.285 24 24 21.285 24 17.936V0.574006C24 0.355006 23.74 0.241003 23.579 0.390004L11 12V24Z" fill="#449AFB"/>
+      <path d="M11 24H17.936C19.372 24 20.691 23.501 21.73 22.667L11 12V24Z" fill="#003087"/>
+      <path d="M23.9997 37V30.064C23.9997 26.715 21.2847 24 17.9357 24H0.572748C0.353748 24 0.239748 24.26 0.388748 24.421L11.9997 37H23.9997Z" fill="#449AFB"/>
+      <path d="M24 37V30.064C24 28.628 23.501 27.309 22.667 26.27L12 37H24Z" fill="#003087"/>
+      <path d="M24 11V17.936C24 21.285 26.715 24 30.064 24H47.426C47.645 24 47.759 23.74 47.61 23.579L36 11H24Z" fill="#449AFB"/>
+      <path d="M24 11V17.936C24 19.372 24.499 20.691 25.333 21.73L36 11H24Z" fill="#003087"/>
+    </symbol>
+    <symbol id="ml-mark-w" viewBox="0 0 48 48">
+      <path d="M37 23.9998H30.064C26.715 23.9998 24 26.7148 24 30.0638V47.4268C24 47.6458 24.26 47.7598 24.421 47.6108L37 35.9998V23.9998Z" fill="#fff"/>
+      <path d="M36.9995 24H30.0635C28.6275 24 27.3085 24.499 26.2695 25.333L36.9995 36V24Z" fill="#9fc3f5"/>
+      <path d="M11 24H17.936C21.285 24 24 21.285 24 17.936V0.574006C24 0.355006 23.74 0.241003 23.579 0.390004L11 12V24Z" fill="#fff"/>
+      <path d="M11 24H17.936C19.372 24 20.691 23.501 21.73 22.667L11 12V24Z" fill="#9fc3f5"/>
+      <path d="M23.9997 37V30.064C23.9997 26.715 21.2847 24 17.9357 24H0.572748C0.353748 24 0.239748 24.26 0.388748 24.421L11.9997 37H23.9997Z" fill="#fff"/>
+      <path d="M24 37V30.064C24 28.628 23.501 27.309 22.667 26.27L12 37H24Z" fill="#9fc3f5"/>
+      <path d="M24 11V17.936C24 21.285 26.715 24 30.064 24H47.426C47.645 24 47.759 23.74 47.61 23.579L36 11H24Z" fill="#fff"/>
+      <path d="M24 11V17.936C24 19.372 24.499 20.691 25.333 21.73L36 11H24Z" fill="#9fc3f5"/>
+    </symbol>
+  </svg>
+
+  <div id="previewFrame">
+    <nav class="topbar">
+      <div class="wrap">
+        <a class="brand" href="#top" aria-label="MaximusLabs home">
+          <svg viewBox="0 0 48 48"><use href="#ml-mark-w"/></svg>
+          <span>MaximusLabs</span>
+        </a>
+        <div class="nav-links">
+          <a href="#comparison">Comparison</a>
+          <a href="#the-list">The list</a>
+          <a href="#methodology">Methodology</a>
+        </div>
+        <div class="preview-toggle" aria-label="Preview size">
+          <button class="active" type="button" data-view="desktop">Desktop</button>
+          <button type="button" data-view="mobile">Mobile</button>
+        </div>
+      </div>
+    </nav>
+
+    <header class="hero" id="top">
+      <svg class="motif" viewBox="0 0 48 48"><use href="#ml-mark-w"/></svg>
+      <svg class="motif-2" viewBox="0 0 48 48"><use href="#ml-mark-w"/></svg>
+      <div class="wrap hero-inner">
+        <div class="crumbs"><span>MaximusLabs.ai &middot; Agency intelligence &middot; Cybersecurity</span><span>Reviewed September 2026 &middot; 10 firms evaluated</span></div>
+        <div class="hero-grid">
+          <div>
+            <p class="eyebrow">Evidence-led directory</p>
+            <h1>10 best AEO agencies for cybersecurity</h1>
+            <p class="dek">A buyer-first comparison of firms that can improve visibility across answer engines, with service depth, proof, pricing, and tradeoffs in one place.</p>
+            <p class="disclosure"><b>Publisher disclosure.</b> MaximusLabs is included in this comparison. Rankings follow the same published scoring system for every firm.</p>
+          </div>
+          <aside class="quick-answer">
+            <header>Quick answer <span>Top 5 of 10</span></header>
+            <ol>
+              <li><a href="#agency-1">MaximusLabs</a><span>Best complete AEO operating system</span></li>
+              <li><a href="#agency-2">Growth Protocol</a><span>Best for technical content operations</span></li>
+              <li><a href="#agency-3">Signal Theory</a><span>Best for enterprise measurement</span></li>
+              <li><a href="#agency-2">Vector North</a><span>Best for lean in-house teams</span></li>
+              <li><a href="#agency-3">Fieldwork Digital</a><span>Best for category education</span></li>
+            </ol>
+            <a href="#the-list">See all 10 agencies &darr;</a>
+          </aside>
+        </div>
+      </div>
+    </header>
+
+    <div class="wrap score-key" aria-label="Assessment key">
+      <div><small>AEO capability</small><p>Technical, content, distribution, measurement, and optimization depth.</p></div>
+      <div><small>Industry fit</small><p>Cybersecurity fluency, evidence, buyer understanding, and execution risk.</p></div>
+      <div><small>Evidence quality</small><p>Verifiable cases, references, ratings, and transparent commercial terms.</p></div>
+    </div>
+
+    <main class="wrap page-shell">
+      <aside class="toc" aria-label="Contents">
+        <strong>On this page</strong>
+        <a data-num="01" href="#comparison">The comparison</a>
+        <a data-num="02" href="#agency-1">MaximusLabs</a>
+        <a data-num="03" href="#agency-2">Growth Protocol</a>
+        <a data-num="04" href="#agency-3">Signal Theory</a>
+        <a data-num="05" href="#methodology">How we chose</a>
+        <a data-num="06" href="#theme-notes">Theme decisions</a>
+      </aside>
+
+      <div class="page-body">
+        <section class="content-section" id="comparison">
+          <div class="section-top"><div><span class="section-label">The comparison</span><h2>All 10, side by side</h2></div><span class="pill">Evidence updated monthly</span></div>
+          <div class="accent-rule"></div>
+          <p>The levers each firm pulls, its strongest proof, where it breaks, and what it costs.</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Agency</th><th>Best for</th><th>Evidence</th><th>Where it breaks</th><th>Monthly price</th></tr></thead>
+              <tbody>
+                <tr><td><b>MaximusLabs</b><small>#1 &middot; maximuslabs.ai</small></td><td>Full-stack answer visibility</td><td>Published research, client cases, operating platform</td><td>Not designed for one-off content orders</td><td><b>$12K to $35K</b></td></tr>
+                <tr><td><b>Growth Protocol</b><small>#2 &middot; growthprotocol.example</small></td><td>Technical content systems</td><td>Enterprise SaaS case library</td><td>Limited brand and PR execution</td><td><b>$9K to $22K</b></td></tr>
+                <tr><td><b>Signal Theory</b><small>#3 &middot; signaltheory.example</small></td><td>Measurement-heavy programs</td><td>Benchmark studies and dashboards</td><td>Longer implementation window</td><td><b>$15K to $40K</b></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <div class="list-head" id="the-list"><span><strong>10 firms</strong> &middot; ranked using one scoring model</span><span>Signal rank shown on every card</span></div>
+
+        <article class="agency-card" id="agency-1">
+          <div class="card-head">
+            <div class="rank">1</div>
+            <div class="card-identity">
+              <h2>MaximusLabs <small>maximuslabs.ai</small></h2>
+              <p>An answer visibility partner combining technical readiness, research-led content, distribution, and measurable share-of-answer improvement.</p>
+              <dl class="meta-grid">
+                <div><dt>Location</dt><dd>Global</dd></div>
+                <div><dt>Founded</dt><dd>2023</dd></div>
+                <div><dt>Program</dt><dd>Managed</dd></div>
+                <div><dt>Annual cost</dt><dd>$144K+</dd></div>
+              </dl>
+              <p class="clients"><b>Notable work.</b> B2B SaaS, cybersecurity, infrastructure, and emerging technology categories.</p>
+            </div>
+            <aside class="scorebox">
+              <div class="score-title">Scorecard</div>
+              <p><span>AEO capability</span><b>66/70</b></p>
+              <p><span>Cybersecurity fit</span><b>27/30</b></p>
+              <p><span>Signal rank</span><b>#1</b></p>
+              <p><span>Evidence quality</span><b>9/10</b></p>
+            </aside>
+          </div>
+          <div class="ratestrip">
+            <div><span>Clutch</span><strong>4.9/5</strong><small>Verified client reviews</small></div>
+            <div><span>Program model</span><strong>Full stack</strong><small>Strategy through measurement</small></div>
+            <div><span>Time to first signal</span><strong>6 to 10 weeks</strong><small>Depends on technical baseline</small></div>
+          </div>
+          <div class="vertical-tabs" data-tabs>
+            <div class="tab-rail" role="tablist">
+              <button type="button" aria-selected="true" data-tab="trust-1">Buyer trust</button>
+              <button type="button" aria-selected="false" data-tab="capability-1">AEO capability</button>
+              <button type="button" aria-selected="false" data-tab="vertical-1">Cybersecurity fit</button>
+              <button type="button" aria-selected="false" data-tab="reviews-1">Review signal</button>
+            </div>
+            <div>
+              <div class="tab-panel" id="trust-1">
+                <dl class="definition-list"><dt>Who they are</dt><dd>Specialist AI-search research and execution team.</dd><dt>Strongest proof</dt><dd>Research methodology connects prompts, citations, pages, and commercial outcomes.</dd><dt>Terms</dt><dd>Quarterly minimum with a scoped measurement baseline.</dd><dt>Best buyer</dt><dd>A category team that needs strategy and execution in one operating model.</dd></dl>
+              </div>
+              <div class="tab-panel" id="capability-1" hidden>
+                <div class="cap-grid"><div><b>Technical readiness</b><span>Entity, crawl, citation, and structured-answer audits.</span></div><div><b>Content systems</b><span>Research-backed assets mapped to buyer questions.</span></div><div><b>Distribution</b><span>Authority and reference-surface development.</span></div><div><b>Measurement</b><span>Share of answer, citation quality, and commercial lift.</span></div></div>
+              </div>
+              <div class="tab-panel" id="vertical-1" hidden>
+                <dl class="definition-list"><dt>Built for</dt><dd>Complex products with long buying cycles and proof-heavy evaluation.</dd><dt>Category strength</dt><dd>Cybersecurity, infrastructure, DevOps, and technical SaaS.</dd><dt>Competitive model</dt><dd>Tracks category, product, alternative, and problem prompts.</dd></dl>
+              </div>
+              <div class="tab-panel" id="reviews-1" hidden>
+                <div class="review"><p>&ldquo;The work connected visibility to the real questions our buyers ask.&rdquo;</p><small>Illustrative review treatment &middot; Third-party verification label</small></div>
+              </div>
+            </div>
+          </div>
+          <footer class="card-foot"><p><b>Best for.</b> Teams that want a measured AEO operating system, not an isolated content sprint.</p><div class="card-actions"><a class="button" href="#comparison">Compare</a><a class="button solid" href="#theme-notes">View full profile</a></div></footer>
+        </article>
+
+        <article class="agency-card" id="agency-2">
+          <div class="card-head">
+            <div class="rank">2</div>
+            <div class="card-identity">
+              <h2>Growth Protocol <small>growthprotocol.example</small></h2>
+              <p>A technically strong content operation for teams that already own positioning, distribution, and measurement.</p>
+              <dl class="meta-grid">
+                <div><dt>Location</dt><dd>US and UK</dd></div><div><dt>Founded</dt><dd>2019</dd></div><div><dt>Program</dt><dd>Hybrid</dd></div><div><dt>Annual cost</dt><dd>$108K+</dd></div>
+              </dl>
+            </div>
+            <aside class="scorebox"><div class="score-title">Scorecard</div><p><span>AEO capability</span><b>61/70</b></p><p><span>Cybersecurity fit</span><b>25/30</b></p><p><span>Signal rank</span><b>#3</b></p><p><span>Evidence quality</span><b>8/10</b></p></aside>
+          </div>
+          <footer class="card-foot"><p><b>Best for.</b> Mature teams that need a scalable technical content engine.</p><div class="card-actions"><a class="button" href="#comparison">Compare</a><a class="button solid" href="#theme-notes">View full profile</a></div></footer>
+        </article>
+
+        <article class="agency-card" id="agency-3">
+          <div class="card-head">
+            <div class="rank">3</div>
+            <div class="card-identity">
+              <h2>Signal Theory <small>signaltheory.example</small></h2>
+              <p>An analytics-led partner for enterprise teams that prioritize governance, benchmarking, and attribution.</p>
+              <dl class="meta-grid">
+                <div><dt>Location</dt><dd>North America</dd></div><div><dt>Founded</dt><dd>2017</dd></div><div><dt>Program</dt><dd>Consulting</dd></div><div><dt>Annual cost</dt><dd>$180K+</dd></div>
+              </dl>
+            </div>
+            <aside class="scorebox"><div class="score-title">Scorecard</div><p><span>AEO capability</span><b>58/70</b></p><p><span>Cybersecurity fit</span><b>26/30</b></p><p><span>Signal rank</span><b>#2</b></p><p><span>Evidence quality</span><b>8/10</b></p></aside>
+          </div>
+          <footer class="card-foot"><p><b>Best for.</b> Enterprise teams with strict reporting and governance requirements.</p><div class="card-actions"><a class="button" href="#comparison">Compare</a><a class="button solid" href="#theme-notes">View full profile</a></div></footer>
+        </article>
+
+        <section class="content-section" id="methodology">
+          <span class="section-label">Methodology</span>
+          <h2>How we chose these agencies</h2>
+          <div class="accent-rule"></div>
+          <p>Every firm is tested against the same three-part model, then checked for evidence quality and commercial fit.</p>
+          <div class="method-grid">
+            <article><h3>Capability audit</h3><p>We score technical readiness, content, authority, measurement, and optimization depth.</p></article>
+            <article><h3>Vertical proof</h3><p>We look for category fluency, published work, client evidence, and buyer understanding.</p></article>
+            <article><h3>Commercial check</h3><p>We compare pricing, engagement terms, time to value, and delivery risk.</p></article>
+          </div>
+          <div class="brand-note"><svg viewBox="0 0 48 48"><use href="#ml-mark-w"/></svg><p><b>The MaximusLabs view.</b> The strongest listicle design should feel editorial and trustworthy first, branded second. Navy creates authority, sky blue guides attention, and white space keeps dense comparison data readable.</p></div>
+        </section>
+
+        <section class="content-section" id="theme-notes">
+          <span class="section-label">Theme decisions</span>
+          <h2>What changed from black and white</h2>
+          <div class="accent-rule"></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Surface</th><th>Previous direction</th><th>Maximus theme</th></tr></thead>
+              <tbody>
+                <tr><td><b>Hero and footer</b></td><td>White with black rules</td><td>Canonical navy gradient with watermark motif</td></tr>
+                <tr><td><b>Headings</b></td><td>Black, medium-heavy</td><td>Navy, Satoshi 900, tighter tracking</td></tr>
+                <tr><td><b>Controls and links</b></td><td>Black fills and outlines</td><td>Blue ramp with sky focus states</td></tr>
+                <tr><td><b>Data surfaces</b></td><td>Hard black borders</td><td>Soft gray rules, white cards, subtle navy tint</td></tr>
+                <tr><td><b>Ranking cues</b></td><td>Outlined number boxes</td><td>Navy-to-blue gradient badges</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <svg class="motif" viewBox="0 0 48 48"><use href="#ml-mark-w"/></svg>
+      <div class="wrap footer-grid">
+        <div><p class="eyebrow">Proposed visual system</p><h2>A Maximus listicle that feels credible, clear, and recognizably ours.</h2><p>This sample preserves the existing page mechanics and replaces the monochrome visual language with the canonical MaximusLabs system.</p></div>
+        <div><p class="eyebrow">Core palette</p><div class="palette"><div class="swatch">#001435</div><div class="swatch">#001C64</div><div class="swatch">#003087</div><div class="swatch">#0070E0</div><div class="swatch">#449AFB</div><div class="swatch">#F3F3F6</div></div></div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    document.querySelectorAll('[data-tabs]').forEach(function (group) {
+      group.querySelectorAll('[data-tab]').forEach(function (button) {
+        button.addEventListener('click', function () {
+          group.querySelectorAll('[data-tab]').forEach(function (item) {
+            item.setAttribute('aria-selected', String(item === button));
+          });
+          group.querySelectorAll('.tab-panel').forEach(function (panel) {
+            panel.hidden = panel.id !== button.dataset.tab;
+          });
+        });
+      });
+    });
+
+    var frame = document.getElementById('previewFrame');
+    document.querySelectorAll('[data-view]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        document.querySelectorAll('[data-view]').forEach(function (item) { item.classList.remove('active'); });
+        button.classList.add('active');
+        frame.classList.toggle('mobile-preview', button.dataset.view === 'mobile');
+        window.scrollTo({top: 0, behavior: 'smooth'});
+      });
+    });
+  </script>
+</body>
+</html>

@@ -10,3 +10,4 @@ dist/
 *.tsbuildinfo
 _analysis/
 _workbook_edit/
+_artifact_work/

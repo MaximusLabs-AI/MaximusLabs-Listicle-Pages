@@ -15,6 +15,16 @@ export const listiclePageQuery = defineQuery(`
   *[_type == "listiclePage" && slug.current == $slug][0] {
     ...,
     "slug": slug.current,
+    template->{
+      name,
+      templateVersion,
+      publisherName,
+      defaultFooterReviewNote,
+      defaultFooterLinkNote,
+      pagePathPrefix,
+      sectionOrder[],
+      writingRules[]
+    },
     entries[] {
       ...,
       agency-> {

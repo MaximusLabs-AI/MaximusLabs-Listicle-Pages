@@ -7,7 +7,7 @@ const here = path.dirname(fileURLToPath(import.meta.url))
 export const root = path.resolve(here, '..')
 export const workbookPath = path.join(root, 'MaximusLabs listicle feed.xlsx')
 
-const headerRows = {README: 2, directions: 2, service_axis: 2, listings: 2, page_spec: 2}
+const headerRows = {README: 2, directions: 2, service_axis: 2, listings: 2, page_spec: 2, writing_memory: 4}
 const engineColumns = {
   engines_chatgpt: 'ChatGPT',
   engines_perplexity: 'Perplexity',
@@ -66,16 +66,24 @@ function rowsFor(tables, name, playerId) {
   return tables[name].filter((row) => row.player_id === playerId)
 }
 
-function directionRows(tables, playerId, verticalKey) {
+function directionRows(tables, playerId, verticalKey, slug) {
   const rows = rowsFor(tables, 'directions', playerId)
+  const exact = rows.filter((row) => row.listing_slug === slug && row.vertical === verticalKey)
+  if (exact.length) return exact
+  const vertical = rows.filter((row) => row.vertical === verticalKey)
+  if (vertical.length) return vertical
   const tagged = rows.filter((row) => String(row.shown_in || '').includes(verticalKey))
-  if (tagged.length) return tagged
-  if (verticalKey === 'b2b-saas') {
-    const explicit = rows.filter((row) => String(row.shown_in || '').includes('b2b-saas'))
-    if (explicit.length) return explicit
-  }
-  const defaultRows = rows.filter((row) => !String(row.shown_in || '').includes('b2b-saas'))
-  return defaultRows.length ? defaultRows : rows
+  return tagged.length ? tagged : rows
+}
+
+function portableText(value, prefix) {
+  return String(value || '').split(/\r?\n/).map((text) => text.trim()).filter(Boolean).map((text, index) => ({
+    _key: key(prefix, text, index),
+    _type: 'block',
+    style: 'normal',
+    markDefs: [],
+    children: [{_key: `span-${index + 1}`, _type: 'span', marks: [], text}],
+  }))
 }
 
 function buildVerticalProfiles(tables, playerId) {
@@ -114,6 +122,7 @@ function buildAgency(tables, player) {
   const universalLines = rowsFor(tables, 'vertical_services', playerId)
     .filter((row) => row.vertical === 'universal')
     .sort((a, b) => numeric(a.row_order) - numeric(b.row_order))
+  const reviewNote = rowsFor(tables, 'review_notes', playerId)[0]
   return {
     _id: `agency.${idPart(playerId)}`,
     _type: 'agency',
@@ -168,6 +177,8 @@ function buildAgency(tables, player) {
       verification: row.verified || 'unverified',
       sourceUrl: row.source_url || undefined,
     })),
+    reviewNote: reviewNote?.review_note || undefined,
+    reviewNoteSourceUrl: reviewNote?.source_url || undefined,
     caseStudies: objects(rowsFor(tables, 'cases', playerId), 'caseStudy', 'client', (row) => ({
       client: row.client,
       vertical: row.vertical || undefined,
@@ -213,31 +224,30 @@ function buildAgency(tables, player) {
   }
 }
 
-function pageWarnings(tables, slug, verticalKey) {
-  const warnings = [
-    'The workbook has no page-level dek field; the importer generated a default.',
-    'The workbook has no page-level publisher disclosure field; the importer generated a default.',
-    'The workbook page_spec describes methodology structure but not the methodology copy.',
-    'The workbook has no SEO title, meta description, canonical URL, or Open Graph image fields.',
-    'The workbook has no agency-level review evidence note field.',
+function pageWarnings(tables, slug, pageRow) {
+  const warnings = []
+  const required = [
+    ['headline', 'headline'], ['service_name', 'service name'], ['vertical_key', 'vertical key'],
+    ['vertical_label', 'vertical label'], ['year', 'year'], ['dek', 'dek'],
+    ['publisher_disclosure', 'publisher disclosure'], ['reviewed_date', 'review date'],
+    ['published_date', 'published date'], ['methodology_intro', 'methodology introduction'],
+    ['seo_title', 'SEO title'], ['meta_description', 'meta description'], ['canonical_url', 'canonical URL'],
   ]
-  const considered = tables.below_the_line.filter((row) => row.listing_slug === slug)
+  for (const [field, label] of required) if (!pageRow?.[field]) warnings.push(`Missing page-level ${label}.`)
+  if ((tables.assessment_keys || []).filter((row) => row.listing_slug === slug).length !== 3) warnings.push('Exactly three assessment keys are required.')
+  if ((tables.methodology || []).filter((row) => row.listing_slug === slug).length < 1) warnings.push('At least one methodology step is required.')
+  if ((tables.questions || []).filter((row) => row.listing_slug === slug).length < 4) warnings.push('At least four comparison questions are required.')
+  if ((tables.quick_answer || []).filter((row) => row.listing_slug === slug).length < 5) warnings.push('At least five quick-answer rows are required.')
+  const considered = (tables.below_the_line || []).filter((row) => row.listing_slug === slug)
   if (considered.some((row) => !row.what_they_are || !row.url || !row.home)) warnings.push('Also-considered records are missing what_they_are, home, or URL values.')
-  if (tables.ratings.some((row) => !row.profile_url)) warnings.push('One or more rating profile URLs are missing.')
-  if (tables.reviews.some((row) => !row.source_url)) warnings.push('One or more review source URLs are missing.')
-  if (tables.cases.some((row) => !row.source_url)) warnings.push('One or more case-study source URLs are missing.')
-  if (tables.cases.some((row) => !row.vertical)) warnings.push('One or more case studies are not tagged to a vertical.')
-  if (verticalKey === 'b2b-saas') warnings.push('The directions tab has no listing_slug or vertical column; B2B SaaS rows are inferred from shown_in text.')
   return warnings
 }
 
 function buildPage(tables, slug, rows) {
   const ordered = rows.slice().sort((a, b) => numeric(a.rank) - numeric(b.rank))
-  const first = ordered[0]
-  const verticalKey = first.vertical
-  const verticalLabel = titleCase(verticalKey)
-  const year = Number(String(first.published_date).slice(0, 4)) || new Date().getFullYear()
-  const warnings = pageWarnings(tables, slug, verticalKey)
+  const pageRow = (tables.listicle_pages || []).find((row) => row.listing_slug === slug) || {}
+  const verticalKey = pageRow.vertical_key || ordered[0]?.vertical
+  const warnings = pageWarnings(tables, slug, pageRow)
   const entries = ordered.map((row, index) => ({
     _key: key('entry', row.player_id, index),
     _type: 'listicleEntry',
@@ -250,42 +260,41 @@ function buildPage(tables, slug, rows) {
     signalRank: numeric(row.signal_rank),
     evidenceQuality: numeric(row.evidence_quality_10),
     bestFor: row.best_for,
-    directions: directionRows(tables, row.player_id, verticalKey)
+    directions: directionRows(tables, row.player_id, verticalKey, slug)
       .sort((a, b) => numeric(a.row_order) - numeric(b.row_order))
       .map((direction) => direction.lever),
     coverage: objects(
-      tables.coverage.filter((coverage) => coverage.listing_slug === slug && coverage.player_id === row.player_id),
+      (tables.coverage || []).filter((coverage) => coverage.listing_slug === slug && coverage.player_id === row.player_id),
       'coverageMark',
       'service_key',
       (coverage) => ({serviceKey: coverage.service_key, mark: coverage.mark, meaning: coverage.meaning, sourceBasis: coverage.source_basis}),
     ),
   }))
-  const publisher = ordered.find((row) => row.listed_reason === 'publisher') || ordered[0]
   return {
     _id: `listicle.${idPart(slug)}`,
     _type: 'listiclePage',
-    title: first.listing_title,
+    template: {_type: 'reference', _ref: 'listicleTemplate.default'},
+    templateVersion: '2026-09-16',
+    sourceWorkbook: 'MaximusLabs listicle feed.xlsx',
+    title: pageRow.headline || ordered[0]?.listing_title,
     slug: {_type: 'slug', current: slug},
-    serviceName: 'Answer Engine Optimization',
+    serviceName: pageRow.service_name,
     verticalKey,
-    verticalLabel,
-    year,
-    dek: `Independent evaluation of the agencies building AI citation presence for ${verticalLabel.toLowerCase()} companies, assessed on answer engine capability, industry surface area, and published evidence.`,
-    publisherName: 'MaximusLabs.ai',
-    publisherDisclosure: `Published by MaximusLabs.ai, which competes with every firm listed. Listed first as publisher; signal rank ${publisher.signal_rank}, printed on our own card.`,
-    reviewedAt: first.published_date,
-    publishedAt: first.published_date,
-    assessmentKeys: [
-      {label: 'How it is weighted', description: `Answer engine capability carries 70, ${verticalLabel.toLowerCase()} fit 30.`, _type: 'scoreKey', _key: 'weighting'},
-      {label: 'AEO capability', description: 'Declared practice, published methodology, independent recognition, measurement, and outcomes.', _type: 'scoreKey', _key: 'capability'},
-      {label: `${verticalLabel} fit`, description: 'Named clients, declared surface, measured citation, and published industry content.', _type: 'scoreKey', _key: 'industry'},
-    ],
+    verticalLabel: pageRow.vertical_label,
+    year: numeric(pageRow.year),
+    dek: pageRow.dek,
+    publisherName: pageRow.publisher_name,
+    publisherDisclosure: pageRow.publisher_disclosure,
+    reviewedAt: pageRow.reviewed_date,
+    publishedAt: pageRow.published_date,
+    assessmentKeys: objects(
+      (tables.assessment_keys || []).filter((row) => row.listing_slug === slug).sort((a, b) => numeric(a.key_order) - numeric(b.key_order)),
+      'scoreKey', 'label', (row) => ({label: row.label, description: row.description}),
+    ),
     entries,
     quickAnswers: objects(
-      tables.quick_answer.filter((row) => row.listing_slug === slug).sort((a, b) => numeric(a.position) - numeric(b.position)),
-      'quickAnswerItem',
-      'player_id',
-      (row) => ({
+      (tables.quick_answer || []).filter((row) => row.listing_slug === slug).sort((a, b) => numeric(a.position) - numeric(b.position)),
+      'quickAnswerItem', 'player_id', (row) => ({
         position: numeric(row.position),
         agency: {_type: 'reference', _ref: `agency.${idPart(row.player_id)}`},
         displayName: row.display_name,
@@ -294,22 +303,18 @@ function buildPage(tables, slug, rows) {
       }),
     ),
     serviceAxis: objects(
-      tables.service_axis.filter((row) => row.vertical === verticalKey).sort((a, b) => numeric(a.axis_order) - numeric(b.axis_order)),
-      'serviceAxisItem',
-      'service_key',
+      (tables.service_axis || []).filter((row) => row.vertical === verticalKey).sort((a, b) => numeric(a.axis_order) - numeric(b.axis_order)),
+      'serviceAxisItem', 'service_key',
       (row) => ({order: numeric(row.axis_order), key: row.service_key, label: row.service_label, whyItExists: row.why_it_exists}),
     ),
-    questions: [
-      {anchor: 'q-services', title: 'What answer engine services does each firm actually provide?', description: 'Services down the side, firms across the top, with a count of how many treat each service as core.', kind: 'serviceMatrix'},
-      {anchor: 'q-money', title: 'What do you actually get for the money?', description: 'Annual figures are derived from published monthly bands unless the firm quotes annually.', kind: 'commercials'},
-      {anchor: 'q-tools', title: 'What tools do they own?', description: 'An owned platform, licensed tools, or a spreadsheet.', kind: 'tooling'},
-      {anchor: 'q-industry', title: `How much do they know about ${verticalLabel.toLowerCase()}?`, description: 'Declared industry practice, measured citations, service depth, gaps, and competitive sets.', kind: 'industry'},
-    ].map((question, index) => ({...question, _type: 'questionSection', _key: `question-${index + 1}`})),
+    questions: objects(
+      (tables.questions || []).filter((row) => row.listing_slug === slug).sort((a, b) => numeric(a.question_order) - numeric(b.question_order)),
+      'questionSection', 'anchor',
+      (row) => ({anchor: row.anchor, title: row.question, description: row.description, kind: row.table_type}),
+    ),
     alsoConsidered: objects(
-      tables.below_the_line.filter((row) => row.listing_slug === slug),
-      'alsoConsideredItem',
-      'player_id',
-      (row) => ({
+      (tables.below_the_line || []).filter((row) => row.listing_slug === slug),
+      'alsoConsideredItem', 'player_id', (row) => ({
         playerId: row.player_id,
         name: row.name,
         home: row.home || undefined,
@@ -321,12 +326,52 @@ function buildPage(tables, slug, rows) {
         reconsiderIf: row.reconsider_if,
       }),
     ),
-    seoTitle: `${first.listing_title} (${year})`,
-    metaDescription: `Compare ${ordered.length} answer engine optimization agencies for ${verticalLabel.toLowerCase()}, including services, pricing, evidence, case studies, and limitations.`,
-    footerReviewNote: 'Ratings appear only for platforms each firm is actually on. A live profile with no reviews remains visible.',
-    footerLinkNote: 'Every outbound link carries rel="nofollow".',
-    editorialStatus: 'needsData',
+    methodologyIntro: pageRow.methodology_intro,
+    methodologySteps: objects(
+      (tables.methodology || []).filter((row) => row.listing_slug === slug).sort((a, b) => numeric(a.step_order) - numeric(b.step_order)),
+      'methodologyStep', 'step_title',
+      (row) => ({title: row.step_title, body: portableText(row.step_body, row.step_title)}),
+    ),
+    methodologyCommunityFinding: pageRow.methodology_community_finding,
+    methodologyCorrection: pageRow.methodology_correction,
+    seoTitle: pageRow.seo_title,
+    metaDescription: pageRow.meta_description,
+    canonicalUrl: pageRow.canonical_url,
+    footerReviewNote: pageRow.footer_review_note,
+    footerLinkNote: pageRow.footer_link_note,
+    editorialStatus: warnings.length ? 'needsData' : (pageRow.editorial_status || 'readyForReview'),
     dataWarnings: warnings,
+  }
+}
+
+function buildTemplate(tables) {
+  const firstPage = (tables.listicle_pages || [])[0] || {}
+  return {
+    _id: 'listicleTemplate.default',
+    _type: 'listicleTemplate',
+    name: 'MaximusLabs standard listicle template',
+    templateVersion: '2026-09-16',
+    publisherName: firstPage.publisher_name || 'MaximusLabs.ai',
+    defaultFooterReviewNote: firstPage.footer_review_note,
+    defaultFooterLinkNote: firstPage.footer_link_note,
+    pagePathPrefix: '/listicles/',
+    sourceWorkbook: 'MaximusLabs listicle feed.xlsx',
+    sectionOrder: objects(
+      (tables.page_spec || []).sort((a, b) => numeric(a.order) - numeric(b.order)),
+      'templateSection', 'section',
+      (row) => ({order: numeric(row.order), name: row.section, content: row['what it contains']}),
+    ),
+    writingRules: objects(
+      (tables.writing_memory || []).sort((a, b) => numeric(a.rule_order) - numeric(b.rule_order)),
+      'writingRule', 'instruction', (row) => ({
+        scope: row.scope,
+        order: numeric(row.rule_order),
+        instruction: row.instruction,
+        sanityTarget: row.sanity_target,
+        sourceTab: row.source_tab,
+        required: String(row.required).toLowerCase() === 'yes',
+      }),
+    ),
   }
 }
 
@@ -335,5 +380,6 @@ export function buildDocuments() {
   const agencies = tables.players.map((player) => buildAgency(tables, player))
   const listingGroups = Object.groupBy(tables.listings, (row) => row.listing_slug)
   const pages = Object.entries(listingGroups).map(([slug, rows]) => buildPage(tables, slug, rows || []))
-  return {tables, agencies, pages}
+  const template = buildTemplate(tables)
+  return {tables, agencies, template, pages}
 }
