@@ -368,3 +368,33 @@ tbody tr:hover td {background: var(--blue-wash)}
   .agency-card:first-of-type,
   .agency-card:last-of-type {border-radius: 12px}
 }
+/* Review update: square cards and unified blue headers */
+.publisher-disclosure,
+.score-key div,
+.quick-answer,
+.toc,
+.content-section,
+.callout,
+.agency-card,
+.agency-card:first-of-type,
+.agency-card:last-of-type,
+.rank,
+.table-wrap,
+.review,
+.case,
+.empty {
+  border-radius: 0;
+}
+
+.toc b,
+th {
+  background: var(--grad-header);
+  color: var(--paper);
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 900px) {
+  .agency-card:first-of-type,
+  .agency-card:last-of-type {border-radius: 0}
+}
