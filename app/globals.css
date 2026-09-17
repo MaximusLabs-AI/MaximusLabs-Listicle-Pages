@@ -194,3 +194,177 @@ td ul {margin: 0; padding-left: 16px}
   .tab-rail {border-right: 0; border-bottom: 1px solid var(--hair)}
   .profile-head .button {position: static}
 }
+/* Published Figma theme: shell-spout-03901395.figma.site */
+:root {
+  --ink: #0f172a;
+  --navy: #1d4ed8;
+  --navy-2: #0f172a;
+  --blue: #1d4ed8;
+  --accent: #2563eb;
+  --sky: #60a5fa;
+  --grad-btn: #1d4ed8;
+  --grad-header: #1d4ed8;
+  --grad-cover: #f1f5f9;
+  --paper: #fff;
+  --ash: #64748b;
+  --line: #cbd5e1;
+  --hair: #e2e8f0;
+  --fill: #f8fafc;
+  --table-head: #f8fafc;
+  --page: #f1f5f9;
+  --blue-wash: #eff6ff;
+  --amber-wash: #fffbeb;
+  --amber-line: #fde68a;
+  --shadow-sm: 0 1px 3px 0 #0000001a, 0 1px 2px -1px #0000001a;
+  --display: 'Inter', 'Segoe UI', sans-serif;
+}
+
+body {background: var(--page)}
+
+.view-nav {
+  border-bottom-color: var(--hair);
+  box-shadow: var(--shadow-sm);
+}
+.view-nav a {color: #334155}
+
+.masthead {color: var(--ink)}
+.crumbs {color: var(--ash)}
+.crumbs span:first-child {color: var(--accent)}
+.masthead h1 {color: var(--ink)}
+.dek {color: var(--ash); opacity: 1}
+.publisher-disclosure {
+  padding: 12px;
+  border: 1px solid var(--amber-line);
+  border-radius: 8px;
+  background: var(--amber-wash);
+  color: var(--ash);
+}
+.publisher-disclosure b {
+  display: inline;
+  margin: 0;
+  color: #334155;
+  font-size: inherit;
+  letter-spacing: normal;
+  line-height: inherit;
+  text-transform: none;
+}
+
+.score-key {
+  gap: 12px;
+  border: 0;
+  background: transparent;
+}
+.score-key div {
+  padding: 12px;
+  border: 1px solid var(--hair);
+  border-radius: 8px;
+  background: var(--paper);
+}
+.score-key div:last-child {border-right: 1px solid var(--hair)}
+.score-key small {color: var(--navy)}
+.score-key div:first-child small {color: var(--ash)}
+.score-key p {color: var(--ash)}
+
+.quick-answer {
+  overflow: hidden;
+  border-color: var(--hair);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+}
+.quick-answer header span {color: #bfdbfe}
+.quick-answer li {transition: background-color .15s ease}
+.quick-answer li:hover {background: var(--blue-wash)}
+
+.toc {
+  overflow: hidden auto;
+  border-color: var(--hair);
+  border-radius: 12px;
+  background: var(--paper);
+  box-shadow: var(--shadow-sm);
+}
+.toc b {
+  border-bottom: 1px solid var(--hair);
+  background: var(--fill);
+  color: #334155;
+}
+.toc a {
+  margin: 2px 5px;
+  padding: 7px;
+  border: 0;
+  border-radius: 6px;
+  color: var(--ash);
+}
+.toc a:hover {background: var(--blue-wash); color: var(--navy)}
+
+.content-section {
+  border-color: var(--hair);
+  border-radius: 12px;
+  background: var(--paper);
+  box-shadow: var(--shadow-sm);
+}
+.content-section > p {color: var(--ash)}
+.callout {
+  border-color: var(--hair);
+  border-radius: 8px;
+}
+.list-head {border-bottom-color: var(--hair)}
+
+.agency-card {
+  overflow: hidden;
+  border-color: var(--hair);
+  background: var(--paper);
+  box-shadow: var(--shadow-sm);
+}
+.agency-card:first-of-type {
+  border-top-color: var(--hair);
+  border-radius: 12px 12px 0 0;
+}
+.agency-card:last-of-type {border-radius: 0 0 12px 12px}
+.rank {
+  border-color: var(--navy);
+  border-radius: 8px;
+  background: var(--navy);
+  color: var(--paper);
+}
+.card-identity h2 small {color: var(--accent)}
+.scorebox {
+  border-color: var(--hair);
+  background: var(--fill);
+}
+.scorebox strong {color: var(--navy)}
+.card-identity > .clients {color: #475569}
+
+.tab-rail button {color: var(--ash)}
+.button {
+  border-color: var(--line);
+  border-radius: 8px;
+  color: #334155;
+}
+.button.solid {border-color: var(--navy)}
+.button:not(.solid):hover,
+.button:not(.solid):focus-visible {border-color: #93c5fd; background: var(--blue-wash); color: var(--navy)}
+
+.table-wrap {
+  border: 1px solid var(--hair);
+  border-radius: 12px;
+  background: var(--paper);
+  box-shadow: var(--shadow-sm);
+}
+th {color: #334155}
+tbody tr:nth-child(even) td {background: var(--paper)}
+tbody tr:hover td {background: var(--blue-wash)}
+
+.review,
+.case {
+  border-color: var(--hair);
+  border-radius: 8px;
+  background: var(--paper);
+}
+.case {overflow: hidden}
+.empty {border-radius: 8px; color: var(--ash)}
+.site-footer {border-top: 1px solid var(--hair); color: var(--ash)}
+
+@media (max-width: 900px) {
+  .agency-card:first-of-type,
+  .agency-card:last-of-type {border-radius: 12px}
+}
