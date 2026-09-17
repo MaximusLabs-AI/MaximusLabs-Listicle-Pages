@@ -5,7 +5,7 @@ import {parseBody} from 'next-sanity/webhook'
 
 type RevalidationPayload = {
   _id?: string
-  _type?: 'listiclePage' | 'agency' | 'listicleTemplate'
+  _type?: 'listiclePage' | 'infoArticle' | 'agency' | 'listicleTemplate'
   operation?: 'create' | 'update' | 'delete'
   slug?: string
 }
@@ -26,8 +26,10 @@ export async function POST(request: NextRequest) {
     }
 
     revalidatePath('/', 'page')
+    revalidatePath('/blog', 'page')
     revalidatePath('/listicles/[slug]', 'page')
     if (body._type === 'listiclePage' && body.slug) revalidatePath(`/listicles/${body.slug}`)
+    if (body._type === 'infoArticle' && body.slug) revalidatePath(`/blog/${body.slug}`)
 
     return NextResponse.json({
       revalidated: true,

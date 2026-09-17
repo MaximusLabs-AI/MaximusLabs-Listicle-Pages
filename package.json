@@ -15,6 +15,9 @@
     "import:workbook": "node scripts/import-workbook.mjs",
     "draft:listicles": "node scripts/create-listicle-drafts.mjs",
     "cleanup:listicles": "node scripts/cleanup-listicle-internal-fields.mjs",
+    "audit:webflow-blog": "node scripts/migrate-webflow-blog.mjs --dry-run",
+    "migrate:webflow-blog": "node scripts/migrate-webflow-blog.mjs --write",
+    "verify:webflow-blog": "node scripts/verify-webflow-drafts.mjs",
     "vercel-link": "vercel link",
     "vercel-pull": "vercel pull --yes",
     "vercel-build": "vercel build",
@@ -37,6 +40,7 @@
     "@types/node": "22.20.2",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
+    "cheerio": "^1.2.0",
     "typescript": "7.0.2",
     "vercel": "^59.17.0"
   },

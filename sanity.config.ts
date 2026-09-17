@@ -21,7 +21,9 @@ export default defineConfig({
   plugins: [structureTool({structure}), visionTool()],
   document: {
     actions: (previous, context) =>
-      context.schemaType === 'listiclePage' ? [VisitSiteAction, ...previous] : previous,
+      ['listiclePage', 'infoArticle'].includes(context.schemaType)
+        ? [VisitSiteAction, ...previous]
+        : previous,
     newDocumentOptions: (previous) =>
       previous.filter((item) => item.templateId !== 'listicleTemplate'),
   },

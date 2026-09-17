@@ -3,7 +3,7 @@ import type {DocumentActionComponent} from 'sanity'
 type SlugValue = {current?: string}
 
 export const VisitSiteAction: DocumentActionComponent = (props) => {
-  if (props.type !== 'listiclePage') return null
+  if (!['listiclePage', 'infoArticle'].includes(props.type)) return null
 
   const document = props.draft || props.version || props.published
   const slug = (document?.slug as SlugValue | undefined)?.current
@@ -13,7 +13,8 @@ export const VisitSiteAction: DocumentActionComponent = (props) => {
     disabled: !slug,
     onHandle: () => {
       if (!slug) return
-      const pageUrl = new URL(`/listicles/${encodeURIComponent(slug)}`, window.location.origin)
+      const prefix = props.type === 'listiclePage' ? '/listicles' : '/blog'
+      const pageUrl = new URL(`${prefix}/${encodeURIComponent(slug)}`, window.location.origin)
       window.open(pageUrl.toString(), '_blank', 'noopener,noreferrer')
     },
   }
