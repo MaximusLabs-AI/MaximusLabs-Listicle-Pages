@@ -54,6 +54,12 @@ export const blogContentBlock = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({name: 'headingLevel', title: 'Heading level', type: 'number'}),
+    defineField({
+      name: 'tocLabel',
+      title: 'Short TOC label',
+      type: 'string',
+      description: 'Concise navigation label. The full heading remains in the article body.',
+    }),
     defineField({name: 'text', title: 'Text', type: 'text', rows: 6}),
     defineField({name: 'items', title: 'List items', type: 'array', of: [{type: 'string'}]}),
     defineField({name: 'url', title: 'Image or embed URL', type: 'url'}),
@@ -69,7 +75,7 @@ export const blogContentBlock = defineType({
 
 function sharedFields() {
   return [
-    defineField({name: 'title', title: 'Title', type: 'string', group: 'content', validation: (rule) => rule.required()}),
+    defineField({name: 'title', title: 'Title', type: 'string', group: 'content', validation: (rule) => rule.required().max(90)}),
     defineField({name: 'slug', title: 'Slug', type: 'slug', group: 'content', options: {source: 'title'}, validation: (rule) => rule.required()}),
     defineField({name: 'excerpt', title: 'Description', type: 'text', rows: 4, group: 'content', validation: (rule) => rule.required()}),
     defineField({name: 'coverImage', title: 'Collection cover image', type: 'image', group: 'content', options: {hotspot: true}}),
@@ -82,9 +88,30 @@ function sharedFields() {
     defineField({name: 'service', title: 'Service', type: 'string', group: 'discovery', options: {list: serviceOptions}, validation: (rule) => rule.required()}),
     defineField({name: 'industry', title: 'Industry', type: 'string', group: 'discovery', options: {list: industryOptions}, validation: (rule) => rule.required()}),
     defineField({name: 'blogType', title: 'Blog type', type: 'string', group: 'discovery', options: {list: blogTypeOptions}, validation: (rule) => rule.required()}),
+    defineField({
+      name: 'contentCategory',
+      title: 'Content focus',
+      type: 'string',
+      group: 'discovery',
+      options: {
+        list: [
+          {title: 'AI Search Fundamentals', value: 'fundamentals'},
+          {title: 'Strategy & Frameworks', value: 'strategy'},
+          {title: 'Technical SEO & Implementation', value: 'technical'},
+          {title: 'Measurement & Analytics', value: 'measurement'},
+          {title: 'Ecommerce & Agentic Commerce', value: 'commerce'},
+          {title: 'Industry Applications', value: 'industry'},
+          {title: 'Case Studies & Research', value: 'research'},
+          {title: 'Agency Selection', value: 'agencySelection'},
+          {title: 'Tools & Platforms', value: 'tools'},
+        ],
+      },
+      validation: (rule) => rule.required(),
+    }),
     defineField({name: 'searchKeywords', title: 'Search keywords', type: 'array', of: [{type: 'string'}], group: 'discovery'}),
     defineField({name: 'seoTitle', title: 'SEO title', type: 'string', group: 'seo'}),
     defineField({name: 'metaDescription', title: 'Meta description', type: 'text', rows: 3, group: 'seo'}),
+    defineField({name: 'sourceTitle', title: 'Original source title', type: 'string', group: 'migration', readOnly: true}),
     defineField({name: 'sourceUrl', title: 'Original published URL', type: 'url', group: 'migration', readOnly: true}),
     defineField({name: 'sourcePath', title: 'Original URL path', type: 'string', group: 'migration', readOnly: true}),
     defineField({name: 'migratedAt', title: 'Migrated at', type: 'datetime', group: 'migration', readOnly: true}),

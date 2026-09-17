@@ -37,6 +37,10 @@ button {color: inherit}
 .masthead::before {position: absolute; z-index: -1; top: 0; bottom: 0; left: 50%; width: 100vw; background: var(--grad-cover); content: ''; transform: translateX(-50%)}
 .crumbs {display: flex; justify-content: space-between; gap: 16px; color: #c8dbf5; font: 12px/1.4 var(--sans)}
 .crumbs span:first-child {color: #9fc3f5}
+.page-breadcrumbs {display: flex; flex-wrap: wrap; gap: 7px; align-items: center}
+.page-breadcrumbs a {color: #9fc3f5; text-decoration: none}
+.page-breadcrumbs a:hover, .page-breadcrumbs a:focus-visible {color: var(--paper); text-decoration: underline; text-underline-offset: 3px}
+.page-breadcrumbs span:last-child {color: #c8dbf5}
 .masthead-grid {display: grid; grid-template-columns: minmax(0,1fr) 330px; gap: 34px; align-items: start; margin-top: 14px}
 .masthead h1 {max-width: 23ch; margin: 0 0 12px; color: var(--paper); font-size: clamp(30px, 4vw, 44px); font-weight: 700; letter-spacing: -.025em; line-height: 1.08}
 .dek {max-width: 70ch; margin: 0 0 14px; color: var(--paper); font-size: 17px; opacity: .85}
@@ -230,6 +234,9 @@ body {background: var(--page)}
 .masthead {color: var(--ink)}
 .crumbs {color: var(--ash)}
 .crumbs span:first-child {color: var(--accent)}
+.page-breadcrumbs a {color: var(--accent)}
+.page-breadcrumbs a:hover, .page-breadcrumbs a:focus-visible {color: var(--navy)}
+.page-breadcrumbs span:last-child {color: var(--ash)}
 .masthead h1 {color: var(--ink)}
 .dek {color: var(--ash); opacity: 1}
 .publisher-disclosure {

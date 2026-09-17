@@ -22,7 +22,7 @@ export default defineConfig({
   document: {
     actions: (previous, context) =>
       ['listiclePage', 'infoArticle'].includes(context.schemaType)
-        ? [VisitSiteAction, ...previous]
+        ? [...previous, VisitSiteAction]
         : previous,
     newDocumentOptions: (previous) =>
       previous.filter((item) => item.templateId !== 'listicleTemplate'),

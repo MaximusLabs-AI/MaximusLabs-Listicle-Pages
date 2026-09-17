@@ -25,6 +25,7 @@ export const blogCollectionQuery = defineQuery(`
     reviewedAt,
     readingMinutes,
     blogType,
+    contentCategory,
     "imageUrl": coalesce(coverImage.asset->url, openGraphImage.asset->url, coverImageUrl),
     "agencyCount": count(entries),
     "href": select(_type == "listiclePage" => "/listicles/" + slug.current, "/blog/" + slug.current)

@@ -10,6 +10,7 @@ export const VisitSiteAction: DocumentActionComponent = (props) => {
 
   return {
     label: 'Visit site',
+    group: ['paneActions'],
     disabled: !slug,
     onHandle: () => {
       if (!slug) return

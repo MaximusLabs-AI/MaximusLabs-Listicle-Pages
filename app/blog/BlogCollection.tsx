@@ -21,11 +21,13 @@ serviceName?: string
   agencyCount?: number
   readingMinutes?: number
   blogType?: string
+  contentCategory?: string
 }
 
 const serviceOptions = ['AEO', 'GEO & AI SEO', 'B2B SEO', 'Technical SEO', 'Agentic Commerce'] as const
 const industryOptions = ['B2B SaaS', 'Healthcare', 'Finance & FinTech', 'Cybersecurity', 'Ecommerce', 'Sales & CRM', 'HR & People', 'Legal', 'Supply Chain', 'Education'] as const
 const blogTypeOptions = ['Informational', 'Listicle', 'Research & Data', 'How-to Guides', 'Case Studies', 'Tools & Platforms'] as const
+const contentCategoryOptions = ['AI Search Fundamentals', 'Strategy & Frameworks', 'Technical SEO & Implementation', 'Measurement & Analytics', 'Ecommerce & Agentic Commerce', 'Industry Applications', 'Case Studies & Research', 'Agency Selection', 'Tools & Platforms'] as const
 
 const webflowCoverImages: Record<string, string> = {
   '10-best-aeo-agencies-b2b-saas': 'https://cdn.prod.website-files.com/688e61db3da1f79ad7b45858/6917030add326a8504d22a80_Black%20and%20Blue%20Simple%20Technology%20Business%20Plan%20Presentation%20(2).png',
@@ -37,6 +39,7 @@ const authorImageUrl = 'https://cdn.prod.website-files.com/688e61db3da1f79ad7b45
 type Service = (typeof serviceOptions)[number]
 type Industry = (typeof industryOptions)[number]
 type BlogType = (typeof blogTypeOptions)[number]
+type ContentCategory = (typeof contentCategoryOptions)[number]
 
 function getService(article: BlogCollectionItem): Service {
   const stored = {aeo: 'AEO', geo: 'GEO & AI SEO', b2bSeo: 'B2B SEO', technicalSeo: 'Technical SEO', agenticCommerce: 'Agentic Commerce'} as const
@@ -78,6 +81,33 @@ function getBlogType(article: BlogCollectionItem): BlogType {
   return 'Informational'
 }
 
+function getContentCategory(article: BlogCollectionItem): ContentCategory {
+  const stored = {
+    fundamentals: 'AI Search Fundamentals',
+    strategy: 'Strategy & Frameworks',
+    technical: 'Technical SEO & Implementation',
+    measurement: 'Measurement & Analytics',
+    commerce: 'Ecommerce & Agentic Commerce',
+    industry: 'Industry Applications',
+    research: 'Case Studies & Research',
+    agencySelection: 'Agency Selection',
+    tools: 'Tools & Platforms',
+  } as const
+  if (article.contentCategory && article.contentCategory in stored) {
+    return stored[article.contentCategory as keyof typeof stored]
+  }
+
+  const text = `${article.title} ${article.dek || ''}`.toLowerCase()
+  if (/agenc|partner selection/.test(text)) return 'Agency Selection'
+  if (/tool|platform|software|alternative|competitor/.test(text)) return 'Tools & Platforms'
+  if (/ecommerce|e-commerce|commerce|checkout|shopify|product/.test(text)) return 'Ecommerce & Agentic Commerce'
+  if (/technical|schema|crawler|robots\.txt|llms\.txt|indexing/.test(text)) return 'Technical SEO & Implementation'
+  if (/measurement|metric|analytics|attribution|\broi\b/.test(text)) return 'Measurement & Analytics'
+  if (/case stud|research|benchmark|report|market analysis/.test(text)) return 'Case Studies & Research'
+  if (/health|fintech|cyber|education|legal|sales|crm|supply chain|industry/.test(text)) return 'Industry Applications'
+  if (/what is|decoded|fundamental|aeo vs seo|geo vs/.test(text)) return 'AI Search Fundamentals'
+  return 'Strategy & Frameworks'
+}
 function getCoverVariant(article: BlogCollectionItem) {
   return (Array.from(article.slug).reduce((total, character) => total + character.charCodeAt(0), 0) % 4) + 1
 }
@@ -97,6 +127,7 @@ export function BlogCollection({articles}: {articles: BlogCollectionItem[]}) {
   const [service, setService] = useState<Service | 'All'>('All')
   const [industry, setIndustry] = useState<Industry | 'All'>('All')
   const [blogType, setBlogType] = useState<BlogType | 'All'>('All')
+  const [contentCategory, setContentCategory] = useState<ContentCategory | 'All'>('All')
 
   const filteredArticles = useMemo(() => {
     const search = submittedQuery.trim().toLowerCase()
@@ -104,11 +135,12 @@ export function BlogCollection({articles}: {articles: BlogCollectionItem[]}) {
       const matchesService = service === 'All' || getService(article) === service
       const matchesIndustry = industry === 'All' || getIndustry(article) === industry
       const matchesBlogType = blogType === 'All' || getBlogType(article) === blogType
+      const matchesContentCategory = contentCategory === 'All' || getContentCategory(article) === contentCategory
       const haystack = `${article.title} ${article.dek || ''} ${article.serviceName || ''} ${article.verticalLabel || ''}`.toLowerCase()
       const matchesSearch = !search || haystack.includes(search)
-      return matchesService && matchesIndustry && matchesBlogType && matchesSearch
+      return matchesService && matchesIndustry && matchesBlogType && matchesContentCategory && matchesSearch
     })
-  }, [articles, blogType, industry, service, submittedQuery])
+  }, [articles, blogType, contentCategory, industry, service, submittedQuery])
 
   const clearFilters = () => {
     setQuery('')
@@ -116,6 +148,7 @@ export function BlogCollection({articles}: {articles: BlogCollectionItem[]}) {
     setService('All')
     setIndustry('All')
     setBlogType('All')
+    setContentCategory('All')
   }
 
   return (
@@ -154,12 +187,21 @@ export function BlogCollection({articles}: {articles: BlogCollectionItem[]}) {
               <span>Resource library</span>
               <h2>Find your next answer</h2>
             </div>
-            {(service !== 'All' || industry !== 'All' || blogType !== 'All' || submittedQuery) && (
+            {(service !== 'All' || industry !== 'All' || blogType !== 'All' || contentCategory !== 'All' || submittedQuery) && (
               <button type="button" onClick={clearFilters}>Clear</button>
             )}
           </div>
 
+
           <details name="blog-filters" className={styles.filterGroup}>
+            <summary>Content focus <span aria-hidden="true">+</span></summary>
+            <div className={styles.filterOptions}>
+              <button className={contentCategory === 'All' ? styles.activeFilter : ''} type="button" onClick={() => setContentCategory('All')}>All content</button>
+              {contentCategoryOptions.map((option) => (
+                <button className={contentCategory === option ? styles.activeFilter : ''} key={option} type="button" onClick={() => setContentCategory(option)}>{option}</button>
+              ))}
+            </div>
+          </details>          <details name="blog-filters" className={styles.filterGroup}>
             <summary>Service <span aria-hidden="true">+</span></summary>
             <div className={styles.filterOptions}>
               <button className={service === 'All' ? styles.activeFilter : ''} type="button" onClick={() => setService('All')}>All services</button>
@@ -241,7 +283,7 @@ export function BlogCollection({articles}: {articles: BlogCollectionItem[]}) {
           ) : (
             <div className={styles.noResults}>
               <h3>No matching resources</h3>
-              <p>Try a broader keyword or clear the service, industry, and blog type filters.</p>
+              <p>Try a broader keyword or clear the service, content focus, industry, and blog type filters.</p>
               <button type="button" onClick={clearFilters}>Show all resources</button>
             </div>
           )}

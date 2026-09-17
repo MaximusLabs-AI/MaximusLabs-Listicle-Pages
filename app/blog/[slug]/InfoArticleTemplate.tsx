@@ -6,6 +6,7 @@ export type InfoArticleBlock = {
   _key?: string
   kind: 'heading' | 'paragraph' | 'bulletList' | 'numberList' | 'quote' | 'image' | 'table' | 'html'
   headingLevel?: number
+  tocLabel?: string
   text?: string
   items?: string[]
   url?: string
@@ -103,7 +104,13 @@ export function InfoArticleTemplate({article}: {article: InfoArticleDocument}) {
 
       <header className={styles.masthead}>
         <div className={styles.wrap}>
-          <p className={styles.eyebrow}>MaximusLabs.ai / {serviceLabels[article.service || ''] || 'AI search insights'}</p>
+          <nav className={styles.breadcrumbs} aria-label="Breadcrumb">
+            <Link href="/">MaximusLabs.ai</Link>
+            <span aria-hidden="true">/</span>
+            <Link href="/blog">Resources</Link>
+            <span aria-hidden="true">/</span>
+            <span>{serviceLabels[article.service || ''] || 'AI search insights'}</span>
+          </nav>
           <div className={styles.heroGrid}>
             <div>
               <h1>{article.title}</h1>
@@ -116,7 +123,6 @@ export function InfoArticleTemplate({article}: {article: InfoArticleDocument}) {
                 </span>
               </div>
             </div>
-            {article.imageUrl ? <img className={styles.cover} src={article.imageUrl} alt="" /> : null}
           </div>
         </div>
       </header>
@@ -126,7 +132,7 @@ export function InfoArticleTemplate({article}: {article: InfoArticleDocument}) {
           <aside className={styles.toc}>
             <strong>On this page</strong>
             {headings.map(({block, index}) => (
-              <a href={'#' + blockId(index)} key={block._key || String(index)}>{block.text}</a>
+              <a href={'#' + blockId(index)} key={block._key || String(index)}>{block.tocLabel || block.text}</a>
             ))}
           </aside>
 

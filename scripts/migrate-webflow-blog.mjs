@@ -29,6 +29,58 @@ const client = writeDrafts
 function clean(value) {
   return String(value || '').replace(/\s+/g, ' ').trim()
 }
+function modernizeYear(value) {
+  return String(value || '')
+    .replace(/\b2020\s*[-–]\s*2025\b/g, '2020-2026')
+    .replace(/\b2025\b/g, '2026')
+}
+
+function trimAtWord(value, maximum) {
+  const text = clean(value)
+  if (text.length <= maximum) return text
+  const shortened = text.slice(0, maximum + 1).replace(/\s+\S*$/, '').replace(/[,:;\-–—]+$/, '')
+  return shortened + '…'
+}
+
+function parseHeadingText(value) {
+  const refreshed = modernizeYear(clean(value))
+  const marker = refreshed.match(/\[toc=([^\]]+)\]/i)
+  const text = clean(refreshed.replace(/\s*\[toc=[^\]]+\]\s*/gi, ' '))
+  let tocLabel = marker ? clean(marker[1]) : text
+  tocLabel = tocLabel.replace(/^Q\d+[.):-]?\s*/i, '').replace(/^[^A-Za-z0-9]+/, '')
+  return {text, tocLabel: trimAtWord(tocLabel, 48)}
+}
+
+function refreshBlock(block) {
+  const refreshed = {...block}
+  if (refreshed.text) refreshed.text = modernizeYear(refreshed.text)
+  if (refreshed.caption) refreshed.caption = modernizeYear(refreshed.caption)
+  if (refreshed.alt) refreshed.alt = modernizeYear(refreshed.alt)
+  if (refreshed.html) refreshed.html = modernizeYear(refreshed.html)
+  if (refreshed.items) refreshed.items = refreshed.items.map(modernizeYear)
+  return refreshed
+}
+
+function optimizeTitle(value, slug) {
+  const specialTitles = {
+    'chatgpt-instant-checkout': 'ChatGPT Instant Checkout: Fees, Setup, and AI Commerce',
+    'what-is-generative-engine-optimization-geo': 'What Is Generative Engine Optimization (GEO)?',
+  }
+  if (specialTitles[slug]) return specialTitles[slug]
+
+  let title = modernizeYear(clean(value))
+  const pipeLead = title.split('|')[0].trim()
+  if (pipeLead.length >= 28) title = pipeLead
+  if (title.length <= 82) return title
+
+  const colonLead = title.split(':')[0].trim()
+  if (colonLead.length >= 28 && colonLead.length <= 78) return colonLead
+
+  const dashLead = title.split(/\s[-–—]\s/)[0].trim()
+  if (dashLead.length >= 28 && dashLead.length <= 78) return dashLead
+
+  return trimAtWord(title, 82)
+}
 
 function slugFromUrl(url) {
   const pathname = new URL(url).pathname.replace(/\/+$/, '')
@@ -110,7 +162,8 @@ function blocksFromRoot($, root, pageUrl) {
 
   const add = (block, seed) => {
     if (!block) return
-    const hasContent = block.text || block.items?.length || block.url || block.html
+    const meaningfulText = block.text ? String(block.text).replace(/[\u200B-\u200D\uFEFF\s]/g, '') : ''
+    const hasContent = meaningfulText || block.items?.length || block.url || block.html
     if (!hasContent) return
     blocks.push({_type: 'blogContentBlock', _key: makeKey(seed + '-' + blocks.length), ...block})
   }
@@ -120,7 +173,8 @@ function blocksFromRoot($, root, pageUrl) {
     const element = $(node)
 
     if (/^h[2-4]$/.test(tag)) {
-      add({kind: 'heading', headingLevel: Number(tag.slice(1)), text: clean(element.text())}, clean(element.text()))
+      const heading = parseHeadingText(element.text())
+      add({kind: 'heading', headingLevel: Number(tag.slice(1)), text: heading.text, tocLabel: heading.tocLabel}, heading.text)
       return
     }
 
@@ -238,6 +292,19 @@ function classifyBlogType(text) {
   return 'informational'
 }
 
+function classifyContentCategory(title, supportingText) {
+  const headline = clean(title)
+  if (/ecommerce|e-commerce|agentic commerce|checkout|shopify|product feed|retail/i.test(headline)) return 'commerce'
+  if (/technical|schema|crawler|robots\.txt|llms\.txt|site structure|indexing|multimodal|voice search|knowledge graph|topic cluster/i.test(headline)) return 'technical'
+  if (/measurement|metrics?|attribution|analytics|calculating roi|competitive analysis/i.test(headline)) return 'measurement'
+  if (/\btools?\b|platform comparison|tracking software|alternatives?|competitors?/i.test(headline)) return 'tools'
+  if (/\bagenc(?:y|ies)\b|agency selection|choose.*partner/i.test(headline)) return 'agencySelection'
+  if (/case stud|success stor|research|market analysis|benchmark|report/i.test(headline)) return 'research'
+  if (/health|fintech|cyber|saas startup|b2b saas|local business|education|legal|sales|crm|supply chain|industry-specific/i.test(headline)) return 'industry'
+  if (/what is|decoded|fundamental|introduction|aeo vs seo|geo vs/i.test(headline)) return 'fundamentals'
+  if (/technical|schema|crawler|implementation/i.test(supportingText)) return 'technical'
+  return 'strategy'
+}
 function searchKeywords(title, blocks) {
   const stop = new Set(['about', 'after', 'again', 'against', 'answer', 'because', 'before', 'being', 'between', 'could', 'engine', 'every', 'from', 'have', 'into', 'maximuslabs', 'more', 'most', 'other', 'search', 'should', 'their', 'there', 'these', 'they', 'this', 'through', 'what', 'when', 'where', 'which', 'while', 'with', 'would', 'your'])
   const headingText = blocks.filter((block) => block.kind === 'heading').slice(0, 8).map((block) => block.text).join(' ')
@@ -288,21 +355,29 @@ async function parsePost(post) {
   $('script:not([type="application/ld+json"]), style, noscript').remove()
 
   const root = chooseArticleRoot($)
-  const blocks = blocksFromRoot($, root, post.url)
-  const title = clean($('meta[property="og:title"]').attr('content')) || clean($('h1').first().text()) || slugFromUrl(post.url)
-  const excerpt = clean($('meta[name="description"]').attr('content')) || clean(root.find('p').first().text()).slice(0, 320)
+  const slug = slugFromUrl(post.url)
+  const blocks = blocksFromRoot($, root, post.url).map(refreshBlock)
+  const sourceTitle = clean($('meta[property="og:title"]').attr('content')) || clean($('h1').first().text()) || slug
+  const title = optimizeTitle(sourceTitle, slug)
+  const excerpt = modernizeYear(clean($('meta[name="description"]').attr('content')) || clean(root.find('p').first().text()).slice(0, 320))
   const imageUrl = post.coverImageUrl || absoluteUrl($('meta[property="og:image"]').attr('content'), post.url)
   const dates = findJsonLdDates($)
-  const classification = classifyPage(title, blocks)
-  const fullText = title + ' ' + excerpt + ' ' + root.text()
-  const slug = slugFromUrl(post.url)
+  const classification = classifyPage(sourceTitle, blocks)
+  const fullText = sourceTitle + ' ' + title + ' ' + excerpt + ' ' + blocks.map((block) => block.text || (block.items || []).join(' ')).join(' ')
   const sourceHash = createHash('sha256').update(clean(root.html())).digest('hex')
-
+  const categoryText = sourceTitle + ' ' + excerpt + ' ' + blocks.filter((block) => block.kind === 'heading').slice(0, 12).map((block) => block.text).join(' ')
+  const contentCategory = classifyContentCategory(sourceTitle, categoryText)
+  const refreshedText = title + ' ' + excerpt + ' ' + JSON.stringify(blocks)
   return {
     audit: {
       url: post.url,
       slug,
       title,
+      titleLength: title.length,
+      contentCategory,
+      tocLabelCount: blocks.filter((block) => block.kind === 'heading' && block.tocLabel).length,
+      tocMarkerResidue: (refreshedText.match(/\[toc=/gi) || []).length,
+      legacy2025Count: (refreshedText.match(/\b2025\b/g) || []).length,
       classification: classification.classification,
       classificationReason: classification.reason,
       headingCount: classification.headingCount,
@@ -314,17 +389,19 @@ async function parsePost(post) {
       _id: 'drafts.webflow-info-' + makeKey(post.url),
       _type: 'infoArticle',
       title,
+      sourceTitle,
       slug: {_type: 'slug', current: slug},
       excerpt,
       coverImageUrl: imageUrl,
       authorName: 'Krishna Kaanth',
       authorImageUrl: AUTHOR_IMAGE,
       publishedAt: dateOnly(dates.publishedAt),
-      updatedAt: dateOnly(dates.updatedAt),
+      updatedAt: new Date().toISOString().slice(0, 10),
       readingMinutes: Math.max(1, Math.ceil(classification.wordCount / 220)),
       service: classifyService(fullText),
       industry: classifyIndustry(fullText),
       blogType: classifyBlogType(fullText),
+      contentCategory,
       searchKeywords: searchKeywords(title, blocks),
       seoTitle: title,
       metaDescription: excerpt,
