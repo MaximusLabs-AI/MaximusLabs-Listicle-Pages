@@ -141,7 +141,7 @@
 .ml-np-col h4 {
   min-width: 172px;
   margin-bottom: 8px;
-  color: #000;
+  color: #333;
   font-size: 16px;
   font-weight: 700;
 }
@@ -300,6 +300,7 @@
   font-weight: 700;
   line-height: 24px;
   text-transform: uppercase;
+  opacity: 0.6;
 }
 .ml-mf-col h4.ml-sub-h {
   margin-top: 24px;
