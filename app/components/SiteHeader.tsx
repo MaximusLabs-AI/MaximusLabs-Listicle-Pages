@@ -1,3 +1,7 @@
+'use client'
+
+import {useState} from 'react'
+
 import './site-chrome.css'
 
 type NavNode =
@@ -94,7 +98,23 @@ function Chevron() {
   )
 }
 
+function BurgerIcon({open}: {open: boolean}) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      {open ? (
+        <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      ) : (
+        <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      )}
+    </svg>
+  )
+}
+
 export function SiteHeader() {
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const [openSection, setOpenSection] = useState<string | null>(null)
+  const close = () => setMobileOpen(false)
+
   return (
     <header className="ml-nav">
       <div className="ml-nav-inner">
@@ -130,8 +150,53 @@ export function SiteHeader() {
         </div>
         <div className="ml-nav-right">
           <a className="ml-nav-cta" href={`${SITE}/contact-us`}>Contact Us</a>
+          <button
+            type="button"
+            className="ml-burger"
+            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={mobileOpen}
+            onClick={() => setMobileOpen((prev) => !prev)}
+          >
+            <BurgerIcon open={mobileOpen} />
+          </button>
         </div>
       </div>
+
+      {mobileOpen ? (
+        <div className="ml-mobile-panel">
+          {NAV.map((item) => {
+            const expanded = openSection === item.label
+            return (
+              <div className="ml-mobile-item" key={item.label}>
+                <button
+                  type="button"
+                  className="ml-mobile-trig"
+                  aria-expanded={expanded}
+                  onClick={() => setOpenSection(expanded ? null : item.label)}
+                >
+                  {item.label}
+                  <Chevron />
+                </button>
+                {expanded ? (
+                  <div className="ml-mobile-sub">
+                    {item.cols.flatMap((col, ci) =>
+                      col.map((node, ni) =>
+                        node.kind === 'head' ? (
+                          <span className="ml-mobile-subhead" key={`${ci}-${ni}`}>{node.text}</span>
+                        ) : (
+                          <a href={node.href} key={`${ci}-${ni}`} onClick={close}>{node.text}</a>
+                        ),
+                      ),
+                    )}
+                  </div>
+                ) : null}
+              </div>
+            )
+          })}
+          <a className="ml-mobile-plain" href={`${SITE}/pricing`} onClick={close}>Pricing</a>
+          <a className="ml-nav-cta ml-mobile-contact" href={`${SITE}/contact-us`} onClick={close}>Contact Us</a>
+        </div>
+      ) : null}
     </header>
   )
 }

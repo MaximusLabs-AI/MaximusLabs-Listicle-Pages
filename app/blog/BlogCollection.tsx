@@ -121,6 +121,70 @@ function readingTime(article: BlogCollectionItem) {
   return article.readingMinutes || Math.max(8, article.agencyCount || 0)
 }
 
+function isListicle(article: BlogCollectionItem): boolean {
+  return article._type === 'listiclePage' || getBlogType(article) === 'Listicle'
+}
+
+function getListicleType(article: BlogCollectionItem): string {
+  const text = (article.title || '').toLowerCase()
+  const nBest = text.match(/\b(\d+)\s+best\b/)
+  if (nBest) return `${nBest[1]} Best`
+  const top = text.match(/\btop\s+(\d+)\b/)
+  if (top) return `Top ${top[1]}`
+  if (/\bbest\b/.test(text)) return 'Best'
+  const num = text.match(/\b(\d+)\b/)
+  if (num) return `${num[1]} Picks`
+  return 'Listicle'
+}
+
+const servicePriority: Record<string, number> = {'AEO': 60, 'GEO & AI SEO': 50, 'Agentic Commerce': 40, 'B2B SEO': 30, 'Technical SEO': 20}
+
+// "Most Read" has no analytics yet, so it ranks by how central a piece is to
+// our services: listicles first, then by service weight, recency as tiebreak.
+function priorityScore(article: BlogCollectionItem): number {
+  let score = isListicle(article) ? 1000 : 0
+  score += servicePriority[getService(article)] ?? 10
+  const date = article.publishedAt || article.reviewedAt
+  if (date) score += new Date(`${date}T00:00:00Z`).getTime() / 1e13
+  return score
+}
+
+function ArticleCard({article}: {article: BlogCollectionItem}) {
+  const coverImage = article.imageUrl || webflowCoverImages[article.slug]
+  return (
+    <article className={styles.card}>
+      <Link className={styles.cardLink} href={article.href || `/listicles/${article.slug}`}>
+        <div className={styles.cardImage}>
+          {coverImage ? (
+            <img src={coverImage} alt="" />
+          ) : (
+            <div className={`${styles.imageFallback} ${styles[`coverVariant${getCoverVariant(article)}`]}`} aria-hidden="true">
+              <i className={styles.coverGrid} />
+              <i className={styles.coverShape} />
+              <span className={styles.coverService}>{getService(article)}</span>
+              <strong>{getIndustry(article)}</strong>
+            </div>
+          )}
+        </div>
+        <div className={styles.cardContent}>
+          <span className={styles.category}>{isListicle(article) ? getListicleType(article) : getService(article)}</span>
+          <h3>{article.title}</h3>
+          <p>{article.dek}</p>
+        </div>
+        <div className={styles.cardMeta}>
+          <span className={styles.avatar}>
+            <img src={authorImageUrl} alt="Krishna Kaanth" />
+          </span>
+          <span>
+            <strong>Krishna Kaanth</strong>
+            <small>{formatDate(article.publishedAt || article.reviewedAt)} · {readingTime(article)} min read</small>
+          </span>
+        </div>
+      </Link>
+    </article>
+  )
+}
+
 export function BlogCollection({articles}: {articles: BlogCollectionItem[]}) {
   const [query, setQuery] = useState('')
   const [submittedQuery, setSubmittedQuery] = useState('')
@@ -141,6 +205,17 @@ export function BlogCollection({articles}: {articles: BlogCollectionItem[]}) {
       return matchesService && matchesIndustry && matchesBlogType && matchesContentCategory && matchesSearch
     })
   }, [articles, blogType, contentCategory, industry, service, submittedQuery])
+
+  // Displayed as stacked sections (not filter tabs): every matching card is
+  // shown; Most Read is the top-priority mix of both types.
+  const sections = useMemo(() => {
+    const mostRead = [...filteredArticles].sort((a, b) => priorityScore(b) - priorityScore(a)).slice(0, 6)
+    return [
+      {key: 'listicles', title: 'Listicles', blurb: 'Ranked directories and best-of guides.', items: filteredArticles.filter(isListicle)},
+      {key: 'informational', title: 'Informational', blurb: 'Explainers, how-tos, and deep dives.', items: filteredArticles.filter((article) => !isListicle(article))},
+      {key: 'mostRead', title: 'Most Read', blurb: 'The highest-priority reads across our services.', items: mostRead},
+    ].filter((section) => section.items.length)
+  }, [filteredArticles])
 
   const clearFilters = () => {
     setQuery('')
@@ -238,44 +313,20 @@ export function BlogCollection({articles}: {articles: BlogCollectionItem[]}) {
             <p>{filteredArticles.length} {filteredArticles.length === 1 ? 'resource' : 'resources'}</p>
           </div>
 
-          {filteredArticles.length ? (
-            <div className={styles.cardGrid}>
-              {filteredArticles.map((article) => {
-                const coverImage = article.imageUrl || webflowCoverImages[article.slug]
-                return (
-                  <article className={styles.card} key={article._id}>
-                    <Link className={styles.cardLink} href={article.href || `/listicles/${article.slug}`}>
-                      <div className={styles.cardImage}>
-                        {coverImage ? (
-                          <img src={coverImage} alt="" />
-                        ) : (
-                          <div className={`${styles.imageFallback} ${styles[`coverVariant${getCoverVariant(article)}`]}`} aria-hidden="true">
-                            <i className={styles.coverGrid} />
-                            <i className={styles.coverShape} />
-                            <span className={styles.coverService}>{getService(article)}</span>
-                            <strong>{getIndustry(article)}</strong>
-                          </div>
-                        )}
-                      </div>
-                      <div className={styles.cardContent}>
-                        <span className={styles.category}>{getService(article)}</span>
-                        <h3>{article.title}</h3>
-                        <p>{article.dek}</p>
-                      </div>
-                      <div className={styles.cardMeta}>
-                        <span className={styles.avatar}>
-                          <img src={authorImageUrl} alt="Krishna Kaanth" />
-                        </span>
-                        <span>
-                          <strong>Krishna Kaanth</strong>
-                          <small>{formatDate(article.publishedAt || article.reviewedAt)} · {readingTime(article)} min read</small>
-                        </span>
-                      </div>
-                    </Link>
-                  </article>
-                )
-              })}
-            </div>
+          {sections.length ? (
+            sections.map((section) => (
+              <section className={styles.collectionSection} key={section.key} aria-label={section.title}>
+                <div className={styles.sectionHead}>
+                  <h3>{section.title}</h3>
+                  <p>{section.blurb}</p>
+                </div>
+                <div className={styles.cardGrid}>
+                  {section.items.map((article) => (
+                    <ArticleCard article={article} key={`${section.key}-${article._id}`} />
+                  ))}
+                </div>
+              </section>
+            ))
           ) : (
             <div className={styles.noResults}>
               <h3>No matching resources</h3>

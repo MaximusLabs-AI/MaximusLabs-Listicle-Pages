@@ -188,6 +188,100 @@
   background: #0070e0;
 }
 
+/* ---------- Mobile menu ---------- */
+.ml-burger {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin-left: 4px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #101011;
+  cursor: pointer;
+}
+.ml-burger svg {
+  width: 26px;
+  height: 26px;
+}
+.ml-mobile-panel {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: calc(100vh - 92px);
+  overflow-y: auto;
+  padding: 6px 0 20px;
+  background: #fff;
+  border-bottom: 1px solid #e6e0d9;
+  box-shadow: 0 14px 26px #001c6414;
+}
+.ml-mobile-item {
+  border-bottom: 1px solid #eef0f4;
+}
+.ml-mobile-trig {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 15px 28px;
+  border: 0;
+  background: transparent;
+  color: #101011;
+  font: 400 16px/24px var(--ml-font);
+  cursor: pointer;
+}
+.ml-mobile-trig svg {
+  width: 14px;
+  height: 14px;
+  color: var(--ml-slate);
+  transition: transform 0.18s;
+}
+.ml-mobile-trig[aria-expanded='true'] svg {
+  transform: rotate(180deg);
+}
+.ml-mobile-sub {
+  padding: 0 28px 14px;
+}
+.ml-mobile-sub a {
+  display: block;
+  padding: 8px 0;
+  color: #333;
+  font-size: 15px;
+  text-decoration: none;
+}
+.ml-mobile-subhead {
+  display: block;
+  padding: 12px 0 4px;
+  color: #333;
+  font-size: 13px;
+  font-weight: 700;
+}
+.ml-mobile-plain {
+  display: block;
+  padding: 15px 28px;
+  border-bottom: 1px solid #eef0f4;
+  color: #101011;
+  font-size: 16px;
+  text-decoration: none;
+}
+.ml-mobile-contact {
+  display: block;
+  margin: 18px 28px 0;
+  text-align: center;
+}
+@media (max-width: 1000px) {
+  .ml-burger {
+    display: inline-flex;
+  }
+  .ml-mobile-panel {
+    display: block;
+  }
+}
+
 /* ---------- Book-a-Call CTA banner ---------- */
 .ml-ctabanner {
   margin: 54px 0 10px;
