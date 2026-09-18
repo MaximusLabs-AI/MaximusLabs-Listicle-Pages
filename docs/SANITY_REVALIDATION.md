@@ -19,7 +19,7 @@ Create one GROQ-powered webhook in the Sanity project settings with these values
 Filter:
 
 ```groq
-coalesce(after()._type, before()._type) in ["listiclePage", "agency", "listicleTemplate"]
+coalesce(after()._type, before()._type) in ["listiclePage", "infoArticle", "agency", "listicleTemplate"]
 ```
 
 Projection:

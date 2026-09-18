@@ -13,6 +13,11 @@ export const metadata: Metadata = {
   description: 'Research, comparisons, and practical guidance for AEO, GEO, AI search, and technical SEO.',
 }
 
+// Re-fetch published Sanity content at most every 60s (ISR), so newly published
+// articles appear on the collection without a redeploy even if the revalidation
+// webhook is not configured for that document type.
+export const revalidate = 60
+
 export default async function HomePage() {
   const articles = await sanityClient.fetch<BlogCollectionItem[]>(blogCollectionQuery)
 
