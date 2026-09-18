@@ -335,7 +335,7 @@ export function BlogCollection({articles}: {articles: BlogCollectionItem[]}) {
           </div>
 
           {shownServiceOptions.length > 0 && (
-            <details name="blog-filters" className={styles.filterGroup}>
+            <details name="blog-filters" className={styles.filterGroup} open>
               <summary>Service <span aria-hidden="true">+</span></summary>
               <div className={styles.filterOptions}>
                 {shownServiceOptions.map((option) => (
