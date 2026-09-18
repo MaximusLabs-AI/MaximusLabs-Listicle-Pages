@@ -36,6 +36,15 @@ type Industry = (typeof industryOptions)[number]
 type BlogType = (typeof blogTypeOptions)[number]
 type ContentCategory = (typeof contentCategoryOptions)[number]
 
+// Only the filter values that currently have content are shown; a filter with
+// an empty list is hidden entirely. To re-enable a value or a whole filter
+// later, add it back to the relevant list below (the full option sets, states,
+// and filter logic all remain in place).
+const shownServiceOptions: readonly Service[] = ['AEO', 'GEO & AI SEO', 'Agentic Commerce', 'Technical SEO']
+const shownIndustryOptions: readonly Industry[] = ['B2B SaaS', 'Cybersecurity', 'Healthcare', 'Finance & FinTech', 'Ecommerce', 'Sales & CRM', 'Education']
+const shownContentCategoryOptions: readonly ContentCategory[] = []
+const shownBlogTypeOptions: readonly BlogType[] = []
+
 // Multi-topic classification: an article can belong to several services and
 // industries at once (e.g. "Best AEO Agencies for Cybersecurity" is both AEO
 // and Cybersecurity), so it surfaces under every relevant filter. The stored
@@ -325,41 +334,49 @@ export function BlogCollection({articles}: {articles: BlogCollectionItem[]}) {
             )}
           </div>
 
-          <details name="blog-filters" className={styles.filterGroup}>
-            <summary>Service <span aria-hidden="true">+</span></summary>
-            <div className={styles.filterOptions}>
-              {serviceOptions.map((option) => (
-                <button className={service === option ? styles.activeFilter : ''} key={option} type="button" onClick={() => setService((prev) => (prev === option ? 'All' : option))}>{option}</button>
-              ))}
-            </div>
-          </details>
+          {shownServiceOptions.length > 0 && (
+            <details name="blog-filters" className={styles.filterGroup}>
+              <summary>Service <span aria-hidden="true">+</span></summary>
+              <div className={styles.filterOptions}>
+                {shownServiceOptions.map((option) => (
+                  <button className={service === option ? styles.activeFilter : ''} key={option} type="button" onClick={() => setService((prev) => (prev === option ? 'All' : option))}>{option}</button>
+                ))}
+              </div>
+            </details>
+          )}
 
-          <details name="blog-filters" className={styles.filterGroup}>
-            <summary>Industry <span aria-hidden="true">+</span></summary>
-            <div className={styles.filterOptions}>
-              {industryOptions.map((option) => (
-                <button className={industry === option ? styles.activeFilter : ''} key={option} type="button" onClick={() => setIndustry((prev) => (prev === option ? 'All' : option))}>{option}</button>
-              ))}
-            </div>
-          </details>
+          {shownIndustryOptions.length > 0 && (
+            <details name="blog-filters" className={styles.filterGroup}>
+              <summary>Industry <span aria-hidden="true">+</span></summary>
+              <div className={styles.filterOptions}>
+                {shownIndustryOptions.map((option) => (
+                  <button className={industry === option ? styles.activeFilter : ''} key={option} type="button" onClick={() => setIndustry((prev) => (prev === option ? 'All' : option))}>{option}</button>
+                ))}
+              </div>
+            </details>
+          )}
 
-          <details name="blog-filters" className={styles.filterGroup}>
-            <summary>Content focus <span aria-hidden="true">+</span></summary>
-            <div className={styles.filterOptions}>
-              {contentCategoryOptions.map((option) => (
-                <button className={contentCategory === option ? styles.activeFilter : ''} key={option} type="button" onClick={() => setContentCategory((prev) => (prev === option ? 'All' : option))}>{option}</button>
-              ))}
-            </div>
-          </details>
+          {shownContentCategoryOptions.length > 0 && (
+            <details name="blog-filters" className={styles.filterGroup}>
+              <summary>Content focus <span aria-hidden="true">+</span></summary>
+              <div className={styles.filterOptions}>
+                {shownContentCategoryOptions.map((option) => (
+                  <button className={contentCategory === option ? styles.activeFilter : ''} key={option} type="button" onClick={() => setContentCategory((prev) => (prev === option ? 'All' : option))}>{option}</button>
+                ))}
+              </div>
+            </details>
+          )}
 
-          <details name="blog-filters" className={styles.filterGroup}>
-            <summary>Blog type <span aria-hidden="true">+</span></summary>
-            <div className={styles.filterOptions}>
-              {blogTypeOptions.map((option) => (
-                <button className={blogType === option ? styles.activeFilter : ''} key={option} type="button" onClick={() => setBlogType((prev) => (prev === option ? 'All' : option))}>{option}</button>
-              ))}
-            </div>
-          </details>
+          {shownBlogTypeOptions.length > 0 && (
+            <details name="blog-filters" className={styles.filterGroup}>
+              <summary>Blog type <span aria-hidden="true">+</span></summary>
+              <div className={styles.filterOptions}>
+                {shownBlogTypeOptions.map((option) => (
+                  <button className={blogType === option ? styles.activeFilter : ''} key={option} type="button" onClick={() => setBlogType((prev) => (prev === option ? 'All' : option))}>{option}</button>
+                ))}
+              </div>
+            </details>
+          )}
         </aside>
 
         <section className={styles.results} aria-live="polite">
