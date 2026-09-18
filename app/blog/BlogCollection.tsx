@@ -160,8 +160,10 @@ function getListicleType(article: BlogCollectionItem): string {
 }
 
 // The main keyword shown on the generated cover: the core topic phrase from the
-// title, with listicle prefixes ("The 10 Best"), lead-ins ("What is"), and
-// trailing "for <audience>" context stripped off.
+// title, with listicle prefixes ("The 10 Best"), lead-ins ("What is") and a
+// trailing generic audience noun ("Companies") removed. The differentiating
+// vertical ("for B2B SaaS", "for Cybersecurity") is KEPT so two otherwise
+// identical listicles get distinct keywords.
 function getCoverKeyword(article: BlogCollectionItem): string {
   const raw = (article.title || '').trim()
   let keyword = raw.split(/:\s|\s[|–—]\s/)[0].trim()
@@ -170,8 +172,13 @@ function getCoverKeyword(article: BlogCollectionItem): string {
     .replace(/^\d+\s+/, '')
     .replace(/^(best|top(\s+\d+)?)\s+/i, '')
     .replace(/^(what\s+(is|are)|how\s+to)\s+/i, '')
-    .replace(/\s+for\s+.+$/i, '')
+    .replace(/\s+(companies|company|businesses|business|brands|teams|firms)\s*$/i, '')
     .replace(/[?.!]+$/, '')
+    // MaximusLabs covers use the acronym, which also keeps the differentiating
+    // vertical ("for B2B SaaS" / "for Cybersecurity") visible on the small card.
+    .replace(/answer engine optimi[sz]ation/gi, 'AEO')
+    .replace(/generative engine optimi[sz]ation/gi, 'GEO')
+    .replace(/search engine optimi[sz]ation/gi, 'SEO')
     .trim()
   return keyword.length >= 3 ? keyword : getService(article)
 }
@@ -188,7 +195,7 @@ function priorityScore(article: BlogCollectionItem): number {
   return score
 }
 
-function ArticleCard({article}: {article: BlogCollectionItem}) {
+function ArticleCard({article, keyword}: {article: BlogCollectionItem; keyword: string}) {
   return (
     <article className={styles.card}>
       <Link className={styles.cardLink} href={article.href || `/listicles/${article.slug}`}>
@@ -196,8 +203,7 @@ function ArticleCard({article}: {article: BlogCollectionItem}) {
           <div className={`${styles.imageFallback} ${styles[`coverVariant${getCoverVariant(article)}`]}`} aria-hidden="true">
             <i className={styles.coverGrid} />
             <i className={styles.coverShape} />
-            <span className={styles.coverService}>{getService(article)}</span>
-            <strong>{getCoverKeyword(article)}</strong>
+            <strong>{keyword}</strong>
           </div>
         </div>
         <div className={styles.cardContent}>
@@ -247,6 +253,27 @@ export function BlogCollection({articles}: {articles: BlogCollectionItem[]}) {
     () => [...filteredArticles].sort((a, b) => priorityScore(b) - priorityScore(a)),
     [filteredArticles],
   )
+
+  // Guarantee every cover title is unique: start from the extracted keyword,
+  // and if two collide, disambiguate with the vertical, then a counter.
+  const coverKeywords = useMemo(() => {
+    const seen = new Set<string>()
+    const map = new Map<string, string>()
+    for (const article of articles) {
+      const base = getCoverKeyword(article)
+      let keyword = base
+      if (seen.has(keyword.toLowerCase())) {
+        const industry = getIndustry(article)
+        const withIndustry = industry && !base.toLowerCase().includes(industry.toLowerCase()) ? `${base} for ${industry}` : base
+        keyword = withIndustry
+        let n = 2
+        while (seen.has(keyword.toLowerCase())) keyword = `${withIndustry} (${n++})`
+      }
+      seen.add(keyword.toLowerCase())
+      map.set(article._id, keyword)
+    }
+    return map
+  }, [articles])
 
   const clearFilters = () => {
     setQuery('')
@@ -347,7 +374,7 @@ export function BlogCollection({articles}: {articles: BlogCollectionItem[]}) {
           {sortedArticles.length ? (
             <div className={styles.cardGrid}>
               {sortedArticles.map((article) => (
-                <ArticleCard article={article} key={article._id} />
+                <ArticleCard article={article} keyword={coverKeywords.get(article._id) ?? getCoverKeyword(article)} key={article._id} />
               ))}
             </div>
           ) : (

@@ -297,13 +297,12 @@
 .imageFallback strong {position: relative; z-index: 1}
 .coverService {font: 700 10px var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--cover-eyebrow)}
 .imageFallback strong {
-  max-width: 64%;
-  margin-top: 8px;
+  max-width: 68%;
   overflow: hidden;
-  font-size: clamp(17px, 0.8rem + 0.9vw, 22px);
+  font-size: clamp(19px, 0.9rem + 1vw, 26px);
   font-weight: 800;
-  letter-spacing: -.01em;
-  line-height: 1.14;
+  letter-spacing: -.015em;
+  line-height: 1.12;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 4;
   display: -webkit-box;
