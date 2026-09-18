@@ -193,34 +193,6 @@
   font: 12px var(--sans);
 }
 
-.collectionSection {margin-bottom: 48px}
-.collectionSection:last-child {margin-bottom: 0}
-
-.sectionHead {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  margin-bottom: 22px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #cbd5e1;
-}
-
-.sectionHead h3 {
-  margin: 0;
-  color: #001c64;
-  font-size: 22px;
-  letter-spacing: -.02em;
-}
-
-.sectionHead p {
-  margin: 0;
-  color: #64748b;
-  font: 13px var(--sans);
-}
-
-@media (max-width: 760px) {
-  .sectionHead {flex-direction: column; align-items: flex-start; gap: 2px}
-}
 
 .cardGrid {
   display: grid;

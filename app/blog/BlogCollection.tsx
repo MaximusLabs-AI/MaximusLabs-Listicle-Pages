@@ -206,16 +206,13 @@ export function BlogCollection({articles}: {articles: BlogCollectionItem[]}) {
     })
   }, [articles, blogType, contentCategory, industry, service, submittedQuery])
 
-  // Displayed as stacked sections (not filter tabs): every matching card is
-  // shown; Most Read is the top-priority mix of both types.
-  const sections = useMemo(() => {
-    const mostRead = [...filteredArticles].sort((a, b) => priorityScore(b) - priorityScore(a)).slice(0, 6)
-    return [
-      {key: 'listicles', title: 'Listicles', blurb: 'Ranked directories and best-of guides.', items: filteredArticles.filter(isListicle)},
-      {key: 'informational', title: 'Informational', blurb: 'Explainers, how-tos, and deep dives.', items: filteredArticles.filter((article) => !isListicle(article))},
-      {key: 'mostRead', title: 'Most Read', blurb: 'The highest-priority reads across our services.', items: mostRead},
-    ].filter((section) => section.items.length)
-  }, [filteredArticles])
+  // One unified collection under a single heading. Readers do not care whether
+  // a card is a listicle or an explainer, so everything sits together, ordered
+  // best-first (highest priority to our services) rather than split by type.
+  const sortedArticles = useMemo(
+    () => [...filteredArticles].sort((a, b) => priorityScore(b) - priorityScore(a)),
+    [filteredArticles],
+  )
 
   const clearFilters = () => {
     setQuery('')
@@ -313,20 +310,12 @@ export function BlogCollection({articles}: {articles: BlogCollectionItem[]}) {
             <p>{filteredArticles.length} {filteredArticles.length === 1 ? 'resource' : 'resources'}</p>
           </div>
 
-          {sections.length ? (
-            sections.map((section) => (
-              <section className={styles.collectionSection} key={section.key} aria-label={section.title}>
-                <div className={styles.sectionHead}>
-                  <h3>{section.title}</h3>
-                  <p>{section.blurb}</p>
-                </div>
-                <div className={styles.cardGrid}>
-                  {section.items.map((article) => (
-                    <ArticleCard article={article} key={`${section.key}-${article._id}`} />
-                  ))}
-                </div>
-              </section>
-            ))
+          {sortedArticles.length ? (
+            <div className={styles.cardGrid}>
+              {sortedArticles.map((article) => (
+                <ArticleCard article={article} key={article._id} />
+              ))}
+            </div>
           ) : (
             <div className={styles.noResults}>
               <h3>No matching resources</h3>
