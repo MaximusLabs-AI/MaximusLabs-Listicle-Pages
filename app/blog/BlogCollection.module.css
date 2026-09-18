@@ -224,15 +224,6 @@
   background: #001c64;
 }
 
-.cardImage img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform .35s ease;
-}
-
-.cardLink:hover .cardImage img {transform: scale(1.025)}
-
 .imageFallback {
   position: relative;
   display: flex;
@@ -260,12 +251,12 @@
 .imageFallback::before {inset: -42% 48% 8% -18%}
 .imageFallback::after {inset: 22% -18% -58% 42%}
 .coverGrid {position: absolute; inset: 0; opacity: .28; background-image: linear-gradient(#fff2 1px, transparent 1px), linear-gradient(90deg, #fff2 1px, transparent 1px); background-size: 28px 28px; transform: perspective(320px) rotateX(55deg) scale(1.35); transform-origin: bottom}
-.coverShape {position: absolute; top: 20%; right: -9%; width: 48%; aspect-ratio: 1; border: 1px solid #ffffff66; transform: rotate(34deg)}
+.coverShape {position: absolute; top: 20%; right: -9%; width: 48%; aspect-ratio: 1; border: 1px solid #ffffff66; transform: rotate(34deg); transition: transform .35s ease}
+.cardLink:hover .coverShape {transform: rotate(34deg) scale(1.08)}
 
 .imageFallback span,
 .imageFallback strong {position: relative; z-index: 1}
-.coverBrand {position: absolute !important; top: 18px; left: 22px; color: #b8d8ff; font: 700 9px var(--sans); letter-spacing: .08em}
-.coverService {font: 700 10px var(--sans); letter-spacing: .12em; text-transform: uppercase}
+.coverService {font: 700 10px var(--sans); letter-spacing: .12em; text-transform: uppercase; color: #b8d8ff}
 .imageFallback strong {max-width: 12ch; margin-top: 6px; font-size: 27px; line-height: 1.02}
 
 .cardContent {

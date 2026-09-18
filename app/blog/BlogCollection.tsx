@@ -29,11 +29,6 @@ const industryOptions = ['B2B SaaS', 'Healthcare', 'Finance & FinTech', 'Cyberse
 const blogTypeOptions = ['Informational', 'Listicle', 'Research & Data', 'How-to Guides', 'Case Studies', 'Tools & Platforms'] as const
 const contentCategoryOptions = ['AI Search Fundamentals', 'Strategy & Frameworks', 'Technical SEO & Implementation', 'Measurement & Analytics', 'Ecommerce & Agentic Commerce', 'Industry Applications', 'Case Studies & Research', 'Agency Selection', 'Tools & Platforms'] as const
 
-const webflowCoverImages: Record<string, string> = {
-  '10-best-aeo-agencies-b2b-saas': 'https://cdn.prod.website-files.com/688e61db3da1f79ad7b45858/6917030add326a8504d22a80_Black%20and%20Blue%20Simple%20Technology%20Business%20Plan%20Presentation%20(2).png',
-  '10-best-aeo-agencies-cybersecurity': 'https://cdn.prod.website-files.com/688e61db3da1f79ad7b45858/69287d12d16729b4b36e672b_2.png',
-}
-
 const authorImageUrl = 'https://cdn.prod.website-files.com/688e61db3da1f79ad7b45858/69086a39359a85bbb951e01d_Minimalist%20Square%20Photo%20Instagram%20Post%20(1).png'
 
 type Service = (typeof serviceOptions)[number]
@@ -241,22 +236,16 @@ export function BlogCollection({articles}: {articles: BlogCollectionItem[]}) {
           {filteredArticles.length ? (
             <div className={styles.cardGrid}>
               {filteredArticles.map((article) => {
-                const coverImage = article.imageUrl || webflowCoverImages[article.slug]
                 return (
                   <article className={styles.card} key={article._id}>
                     <Link className={styles.cardLink} href={article.href || `/listicles/${article.slug}`}>
                       <div className={styles.cardImage}>
-                        {coverImage ? (
-                          <img src={coverImage} alt="" />
-                        ) : (
-                          <div className={`${styles.imageFallback} ${styles[`coverVariant${getCoverVariant(article)}`]}`} aria-hidden="true">
-                            <i className={styles.coverGrid} />
-                            <i className={styles.coverShape} />
-                            <span className={styles.coverBrand}>MaximusLabs.ai</span>
-                            <span className={styles.coverService}>{getService(article)}</span>
-                            <strong>{article.verticalLabel || 'AI Search'}</strong>
-                          </div>
-                        )}
+                        <div className={`${styles.imageFallback} ${styles[`coverVariant${getCoverVariant(article)}`]}`} aria-hidden="true">
+                          <i className={styles.coverGrid} />
+                          <i className={styles.coverShape} />
+                          <span className={styles.coverService}>{getService(article)}</span>
+                          <strong>{getIndustry(article)}</strong>
+                        </div>
                       </div>
                       <div className={styles.cardContent}>
                         <span className={styles.category}>{getService(article)}</span>
