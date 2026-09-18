@@ -227,8 +227,9 @@
   background: #001c64;
 }
 
-/* MaximusLabs cover motif (dot grid + enlarged dot + quarter-circle) in four
-   color schemes, so covers vary across cards. Keyword heading, no logo. */
+/* MaximusLabs cover: motif (dot grid + enlarged dot + quarter-circle) on the
+   left, keyword heading right-aligned on EVERY card. Four color schemes only;
+   the layout is identical so covers read consistently. No logo. */
 .imageFallback {
   position: relative;
   display: flex;
@@ -239,30 +240,29 @@
   overflow: hidden;
   background: var(--cover-bg, #001c64);
   color: var(--cover-text, #fff);
+  text-align: right;
 }
 
-/* 1: dark navy / white  ·  2: light / navy  (both: motif right, heading left) */
-.coverVariant1 {--cover-bg: linear-gradient(100deg,#00184f 0%,#002a78 58%,#0a48a6 100%); --cover-text: #fff; --cover-eyebrow: #9fc3f5; --cover-dot: #a9c7f5; --cover-bigdot: #449afb; --cover-shape: #1a5ec6}
-.coverVariant2 {--cover-bg: #eef1fa; --cover-text: #001c64; --cover-eyebrow: #0070e0; --cover-dot: #c2ccea; --cover-bigdot: #0070e0; --cover-shape: #0070e0}
-/* 3: bright blue / white  ·  4: light / navy  (both: motif left, heading right) */
-.coverVariant3 {--cover-bg: linear-gradient(120deg,#1450c0,#1f63d8); --cover-text: #fff; --cover-eyebrow: #cfe0ff; --cover-dot: #bcd4ff; --cover-bigdot: #001c64; --cover-shape: #001c64}
-.coverVariant4 {--cover-bg: #eaf0fb; --cover-text: #001c64; --cover-eyebrow: #0070e0; --cover-dot: #c2ccea; --cover-bigdot: #001c64; --cover-shape: #001c64}
+.coverVariant1 {--cover-bg: linear-gradient(100deg,#00184f 0%,#002a78 58%,#0a48a6 100%); --cover-text: #fff; --cover-dot: #a9c7f5; --cover-bigdot: #449afb; --cover-shape: #1a5ec6}
+.coverVariant2 {--cover-bg: #eef1fa; --cover-text: #001c64; --cover-dot: #c2ccea; --cover-bigdot: #0070e0; --cover-shape: #0070e0}
+.coverVariant3 {--cover-bg: linear-gradient(120deg,#1450c0,#1f63d8); --cover-text: #fff; --cover-dot: #bcd4ff; --cover-bigdot: #001c64; --cover-shape: #001c64}
+.coverVariant4 {--cover-bg: #eaf0fb; --cover-text: #001c64; --cover-dot: #c2ccea; --cover-bigdot: #001c64; --cover-shape: #001c64}
 
 .coverGrid {
   position: absolute;
   top: 16%;
-  right: 7%;
+  left: 7%;
   width: 30%;
   height: 64%;
   background-image: radial-gradient(circle, var(--cover-dot) 1.3px, transparent 1.6px);
   background-size: 20px 20px;
-  background-position: right top;
+  background-position: left top;
 }
 .coverGrid::before {
   content: '';
   position: absolute;
   top: -2px;
-  left: -4px;
+  right: -4px;
   width: 12px;
   height: 12px;
   border-radius: 50%;
@@ -270,7 +270,7 @@
 }
 .coverShape {
   position: absolute;
-  right: -7%;
+  left: -7%;
   bottom: -16%;
   width: 30%;
   aspect-ratio: 1;
@@ -282,22 +282,10 @@
 }
 .cardLink:hover .coverShape {transform: scale(1.06)}
 
-/* variants 3 & 4: motif on the left, heading aligned right */
-.coverVariant3 .coverGrid,
-.coverVariant4 .coverGrid {right: auto; left: 7%; background-position: left top}
-.coverVariant3 .coverGrid::before,
-.coverVariant4 .coverGrid::before {left: auto; right: -4px}
-.coverVariant3 .coverShape,
-.coverVariant4 .coverShape {right: auto; left: -7%}
-.coverVariant3, .coverVariant4 {text-align: right}
-.coverVariant3 strong,
-.coverVariant4 strong {margin-left: auto}
-
-.imageFallback span,
 .imageFallback strong {position: relative; z-index: 1}
-.coverService {font: 700 10px var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--cover-eyebrow)}
 .imageFallback strong {
   max-width: 68%;
+  margin-left: auto;
   overflow: hidden;
   font-size: clamp(19px, 0.9rem + 1vw, 26px);
   font-weight: 800;
