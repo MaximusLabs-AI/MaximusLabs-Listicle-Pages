@@ -224,33 +224,24 @@
   overflow: hidden;
   aspect-ratio: 16 / 9;
   border-radius: 8px 8px 0 0;
-  background: #fff;
+  background: #001c64;
 }
-
-.cardImage img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  transition: transform .35s ease;
-}
-
-.cardLink:hover .cardImage img {transform: scale(1.025)}
 
 .imageFallback {
   position: relative;
   display: flex;
   height: 100%;
   justify-content: flex-end;
-  padding: 22px;
+  padding: 22px 24px;
   overflow: hidden;
-  background: linear-gradient(145deg, #050a16 0%, #001c64 62%, #449afb 100%);
+  background: linear-gradient(150deg, #001129 0%, #001c64 55%, #003087 100%);
   color: #fff;
   flex-direction: column;
 }
 
-.coverVariant2 {background: linear-gradient(155deg, #06101f 0 44%, #003087 44% 76%, #6ab0ff 76%)}
-.coverVariant3 {background: linear-gradient(120deg, #000 0 35%, #001435 35% 68%, #087be7 68%)}
-.coverVariant4 {background: linear-gradient(165deg, #001435 0 52%, #164992 52% 78%, #449afb 78%)}
+.coverVariant2 {background: linear-gradient(155deg, #001435 0%, #002b6e 60%, #0b4aa8 100%)}
+.coverVariant3 {background: linear-gradient(125deg, #000a1c 0%, #001c64 60%, #0655a0 100%)}
+.coverVariant4 {background: linear-gradient(165deg, #001229 0%, #003087 72%, #0f5bb0 100%)}
 
 .imageFallback::before,
 .imageFallback::after {
@@ -269,7 +260,18 @@
 .imageFallback span,
 .imageFallback strong {position: relative; z-index: 1}
 .coverService {font: 700 10px var(--sans); letter-spacing: .12em; text-transform: uppercase; color: #b8d8ff}
-.imageFallback strong {max-width: 12ch; margin-top: 6px; font-size: 27px; line-height: 1.02}
+.imageFallback strong {
+  max-width: 15ch;
+  margin-top: 8px;
+  overflow: hidden;
+  font-size: clamp(19px, 1rem + 1.1vw, 25px);
+  font-weight: 800;
+  letter-spacing: -.01em;
+  line-height: 1.08;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  display: -webkit-box;
+}
 
 .cardContent {
   display: flex;

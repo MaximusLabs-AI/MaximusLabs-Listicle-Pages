@@ -29,11 +29,6 @@ const industryOptions = ['B2B SaaS', 'Healthcare', 'Finance & FinTech', 'Cyberse
 const blogTypeOptions = ['Informational', 'Listicle', 'Research & Data', 'How-to Guides', 'Case Studies', 'Tools & Platforms'] as const
 const contentCategoryOptions = ['AI Search Fundamentals', 'Strategy & Frameworks', 'Technical SEO & Implementation', 'Measurement & Analytics', 'Ecommerce & Agentic Commerce', 'Industry Applications', 'Case Studies & Research', 'Agency Selection', 'Tools & Platforms'] as const
 
-const webflowCoverImages: Record<string, string> = {
-  '10-best-aeo-agencies-b2b-saas': 'https://cdn.prod.website-files.com/688e61db3da1f79ad7b45858/6917030add326a8504d22a80_Black%20and%20Blue%20Simple%20Technology%20Business%20Plan%20Presentation%20(2).png',
-  '10-best-aeo-agencies-cybersecurity': 'https://cdn.prod.website-files.com/688e61db3da1f79ad7b45858/69287d12d16729b4b36e672b_2.png',
-}
-
 const authorImageUrl = 'https://cdn.prod.website-files.com/688e61db3da1f79ad7b45858/69086a39359a85bbb951e01d_Minimalist%20Square%20Photo%20Instagram%20Post%20(1).png'
 
 type Service = (typeof serviceOptions)[number]
@@ -137,6 +132,23 @@ function getListicleType(article: BlogCollectionItem): string {
   return 'Listicle'
 }
 
+// The main keyword shown on the generated cover: the core topic phrase from the
+// title, with listicle prefixes ("The 10 Best"), lead-ins ("What is"), and
+// trailing "for <audience>" context stripped off.
+function getCoverKeyword(article: BlogCollectionItem): string {
+  const raw = (article.title || '').trim()
+  let keyword = raw.split(/:\s|\s[|–—]\s/)[0].trim()
+  keyword = keyword
+    .replace(/^the\s+/i, '')
+    .replace(/^\d+\s+/, '')
+    .replace(/^(best|top(\s+\d+)?)\s+/i, '')
+    .replace(/^(what\s+(is|are)|how\s+to)\s+/i, '')
+    .replace(/\s+for\s+.+$/i, '')
+    .replace(/[?.!]+$/, '')
+    .trim()
+  return keyword.length >= 3 ? keyword : getService(article)
+}
+
 const servicePriority: Record<string, number> = {'AEO': 60, 'GEO & AI SEO': 50, 'Agentic Commerce': 40, 'B2B SEO': 30, 'Technical SEO': 20}
 
 // "Most Read" has no analytics yet, so it ranks by how central a piece is to
@@ -150,21 +162,16 @@ function priorityScore(article: BlogCollectionItem): number {
 }
 
 function ArticleCard({article}: {article: BlogCollectionItem}) {
-  const coverImage = article.imageUrl || webflowCoverImages[article.slug]
   return (
     <article className={styles.card}>
       <Link className={styles.cardLink} href={article.href || `/listicles/${article.slug}`}>
         <div className={styles.cardImage}>
-          {coverImage ? (
-            <img src={coverImage} alt="" />
-          ) : (
-            <div className={`${styles.imageFallback} ${styles[`coverVariant${getCoverVariant(article)}`]}`} aria-hidden="true">
-              <i className={styles.coverGrid} />
-              <i className={styles.coverShape} />
-              <span className={styles.coverService}>{getService(article)}</span>
-              <strong>{getIndustry(article)}</strong>
-            </div>
-          )}
+          <div className={`${styles.imageFallback} ${styles[`coverVariant${getCoverVariant(article)}`]}`} aria-hidden="true">
+            <i className={styles.coverGrid} />
+            <i className={styles.coverShape} />
+            <span className={styles.coverService}>{getService(article)}</span>
+            <strong>{getCoverKeyword(article)}</strong>
+          </div>
         </div>
         <div className={styles.cardContent}>
           <span className={styles.category}>{isListicle(article) ? getListicleType(article) : getService(article)}</span>
