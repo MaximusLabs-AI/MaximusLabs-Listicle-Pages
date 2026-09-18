@@ -141,13 +141,6 @@ export function InfoArticleTemplate({article}: {article: InfoArticleDocument}) {
           </article>
         </div>
       </main>
-
-      <footer className={styles.footer}>
-        <div className={styles.wrap}>
-          <strong>MaximusLabs.ai</strong>
-          <p>Independent guidance for visibility across search and AI answer engines.</p>
-        </div>
-      </footer>
     </div>
   )
 }

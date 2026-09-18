@@ -2,6 +2,9 @@ import type {Metadata} from 'next'
 
 import {sanityClient} from '@/sanity/lib/client'
 import {blogCollectionQuery} from '@/sanity/lib/queries'
+import {BookCallCta} from '@/app/components/BookCallCta'
+import {SiteFooter} from '@/app/components/SiteFooter'
+import {SiteHeader} from '@/app/components/SiteHeader'
 
 import {BlogCollection, type BlogCollectionItem} from './BlogCollection'
 
@@ -13,5 +16,12 @@ export const metadata: Metadata = {
 export default async function BlogPage() {
   const articles = await sanityClient.fetch<BlogCollectionItem[]>(blogCollectionQuery)
 
-  return <BlogCollection articles={articles} />
+  return (
+    <>
+      <SiteHeader />
+      <BlogCollection articles={articles} />
+      <BookCallCta />
+      <SiteFooter />
+    </>
+  )
 }

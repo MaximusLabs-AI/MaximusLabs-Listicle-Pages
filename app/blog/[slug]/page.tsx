@@ -3,6 +3,8 @@ import {notFound} from 'next/navigation'
 
 import {sanityClient} from '@/sanity/lib/client'
 import {infoArticleQuery} from '@/sanity/lib/queries'
+import {SiteFooter} from '@/app/components/SiteFooter'
+import {SiteHeader} from '@/app/components/SiteHeader'
 
 import {InfoArticleTemplate, type InfoArticleDocument} from './InfoArticleTemplate'
 
@@ -30,5 +32,11 @@ export default async function InformationalArticlePage({params}: Props) {
   const article = await getArticle(slug)
   if (!article) notFound()
 
-  return <InfoArticleTemplate article={article} />
+  return (
+    <>
+      <SiteHeader />
+      <InfoArticleTemplate article={article} />
+      <SiteFooter />
+    </>
+  )
 }
