@@ -36,31 +36,58 @@ type Industry = (typeof industryOptions)[number]
 type BlogType = (typeof blogTypeOptions)[number]
 type ContentCategory = (typeof contentCategoryOptions)[number]
 
+// Multi-topic classification: an article can belong to several services and
+// industries at once (e.g. "Best AEO Agencies for Cybersecurity" is both AEO
+// and Cybersecurity), so it surfaces under every relevant filter. The stored
+// field is the primary; regex over title + dek adds the rest. The single-value
+// helpers return the primary (first) match, used for the card badge/eyebrow.
+const serviceStored = {aeo: 'AEO', geo: 'GEO & AI SEO', b2bSeo: 'B2B SEO', technicalSeo: 'Technical SEO', agenticCommerce: 'Agentic Commerce'} as const
+
+function getServices(article: BlogCollectionItem): Service[] {
+  const out: Service[] = []
+  const add = (value: Service) => {
+    if (!out.includes(value)) out.push(value)
+  }
+  if (article.serviceName && article.serviceName in serviceStored) add(serviceStored[article.serviceName as keyof typeof serviceStored])
+  const text = `${article.serviceName || ''} ${article.title} ${article.dek || ''}`.toLowerCase()
+  if (/answer engine|\baeo\b/.test(text)) add('AEO')
+  if (/generative engine|\bgeo\b|ai seo|ai search|ai citation|llm\b/.test(text)) add('GEO & AI SEO')
+  if (/agentic commerce|shopping agent|ai commerce|instant checkout|\bcheckout\b/.test(text)) add('Agentic Commerce')
+  if (/technical seo|schema|crawler|robots\.txt|llms\.txt|indexing/.test(text)) add('Technical SEO')
+  if (/b2b seo/.test(text)) add('B2B SEO')
+  if (!out.length) add('AEO')
+  return out
+}
+
 function getService(article: BlogCollectionItem): Service {
-  const stored = {aeo: 'AEO', geo: 'GEO & AI SEO', b2bSeo: 'B2B SEO', technicalSeo: 'Technical SEO', agenticCommerce: 'Agentic Commerce'} as const
-  if (article.serviceName && article.serviceName in stored) return stored[article.serviceName as keyof typeof stored]
-  const text = `${article.serviceName || ''} ${article.title}`.toLowerCase()
-  if (/technical seo|schema|crawler|robots\.txt|llms\.txt/.test(text)) return 'Technical SEO'
-  if (/agentic commerce|shopping agent|ai commerce/.test(text)) return 'Agentic Commerce'
-  if (/b2b seo|search engine optimization/.test(text) && !/answer engine/.test(text)) return 'B2B SEO'
-  if (/generative engine|\bgeo\b|ai seo/.test(text)) return 'GEO & AI SEO'
-  return 'AEO'
+  return getServices(article)[0]
+}
+
+const industryStored = {b2bSaas: 'B2B SaaS', healthcare: 'Healthcare', finance: 'Finance & FinTech', cybersecurity: 'Cybersecurity', ecommerce: 'Ecommerce', salesCrm: 'Sales & CRM', hrPeople: 'HR & People', legal: 'Legal', supplyChain: 'Supply Chain', education: 'Education'} as const
+
+function getIndustries(article: BlogCollectionItem): Industry[] {
+  const out: Industry[] = []
+  const add = (value: Industry) => {
+    if (!out.includes(value)) out.push(value)
+  }
+  if (article.verticalLabel && article.verticalLabel in industryStored) add(industryStored[article.verticalLabel as keyof typeof industryStored])
+  const text = `${article.verticalLabel || ''} ${article.title} ${article.dek || ''}`.toLowerCase()
+  if (/health|medical|patient|pharma|ymyl/.test(text)) add('Healthcare')
+  if (/fintech|finance|financial|banking|insurance/.test(text)) add('Finance & FinTech')
+  if (/cyber|infosec|security vendor/.test(text)) add('Cybersecurity')
+  if (/ecommerce|e-commerce|retail|shopify|product feed|instant checkout/.test(text)) add('Ecommerce')
+  if (/\bsales\b|\bcrm\b|revenue operations|revops/.test(text)) add('Sales & CRM')
+  if (/hr tech|hrtech|human resources|recruit|workforce/.test(text)) add('HR & People')
+  if (/legal|law firm|lawtech/.test(text)) add('Legal')
+  if (/supply chain|logistics|procurement/.test(text)) add('Supply Chain')
+  if (/education|edtech|\blearning\b/.test(text)) add('Education')
+  if (/b2b saas|\bsaas\b/.test(text)) add('B2B SaaS')
+  if (!out.length) add('B2B SaaS')
+  return out
 }
 
 function getIndustry(article: BlogCollectionItem): Industry {
-  const stored = {b2bSaas: 'B2B SaaS', healthcare: 'Healthcare', finance: 'Finance & FinTech', cybersecurity: 'Cybersecurity', ecommerce: 'Ecommerce', salesCrm: 'Sales & CRM', hrPeople: 'HR & People', legal: 'Legal', supplyChain: 'Supply Chain', education: 'Education'} as const
-  if (article.verticalLabel && article.verticalLabel in stored) return stored[article.verticalLabel as keyof typeof stored]
-  const text = `${article.verticalLabel || ''} ${article.title} ${article.dek || ''}`.toLowerCase()
-  if (/health|medical|patient|pharma/.test(text)) return 'Healthcare'
-  if (/fintech|finance|financial|banking|insurance/.test(text)) return 'Finance & FinTech'
-  if (/cyber|security|infosec/.test(text)) return 'Cybersecurity'
-  if (/ecommerce|e-commerce|retail|shopify/.test(text)) return 'Ecommerce'
-  if (/sales|crm|revenue operations|revops/.test(text)) return 'Sales & CRM'
-  if (/hr tech|hrtech|human resources|recruit|workforce/.test(text)) return 'HR & People'
-  if (/legal|law firm|lawtech/.test(text)) return 'Legal'
-  if (/supply chain|logistics|procurement/.test(text)) return 'Supply Chain'
-  if (/education|edtech|learning/.test(text)) return 'Education'
-  return 'B2B SaaS'
+  return getIndustries(article)[0]
 }
 
 function getBlogType(article: BlogCollectionItem): BlogType {
@@ -203,8 +230,8 @@ export function BlogCollection({articles}: {articles: BlogCollectionItem[]}) {
   const filteredArticles = useMemo(() => {
     const search = submittedQuery.trim().toLowerCase()
     return articles.filter((article) => {
-      const matchesService = service === 'All' || getService(article) === service
-      const matchesIndustry = industry === 'All' || getIndustry(article) === industry
+      const matchesService = service === 'All' || getServices(article).includes(service)
+      const matchesIndustry = industry === 'All' || getIndustries(article).includes(industry)
       const matchesBlogType = blogType === 'All' || getBlogType(article) === blogType
       const matchesContentCategory = contentCategory === 'All' || getContentCategory(article) === contentCategory
       const haystack = `${article.title} ${article.dek || ''} ${article.serviceName || ''} ${article.verticalLabel || ''}`.toLowerCase()
