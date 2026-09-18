@@ -31,6 +31,12 @@
   font-family: var(--ml-font);
 }
 
+.ml-nav a,
+.ml-ctabanner a,
+.ml-mfooter a {
+  text-decoration: none;
+}
+
 .ml-wrap {
   width: 100%;
   max-width: var(--ml-wrap);
@@ -43,7 +49,7 @@
   position: sticky;
   top: 0;
   z-index: 50;
-  border-bottom: 1px solid var(--ml-bone);
+  border-bottom: 1px solid #e6e0d9;
   background: #fff;
 }
 .ml-nav-inner {
@@ -132,9 +138,7 @@
 }
 .ml-np-col h4 {
   min-width: 172px;
-  margin-bottom: 6px;
-  padding-bottom: 11px;
-  border-bottom: 1px solid var(--ml-line);
+  margin-bottom: 8px;
   color: var(--ml-navy);
   font-size: 15px;
   font-weight: 700;
@@ -278,9 +282,7 @@
   border-top: 1px solid var(--ml-bone);
 }
 .ml-mf-col h4 {
-  margin-bottom: 8px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--ml-bone);
+  margin-bottom: 10px;
   color: #000;
   font-size: 16px;
   font-weight: 700;
