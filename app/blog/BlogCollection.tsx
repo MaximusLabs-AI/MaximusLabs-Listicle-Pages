@@ -192,21 +192,11 @@ export function BlogCollection({articles}: {articles: BlogCollectionItem[]}) {
             )}
           </div>
 
-
           <details name="blog-filters" className={styles.filterGroup}>
-            <summary>Content focus <span aria-hidden="true">+</span></summary>
-            <div className={styles.filterOptions}>
-              <button className={contentCategory === 'All' ? styles.activeFilter : ''} type="button" onClick={() => setContentCategory('All')}>All content</button>
-              {contentCategoryOptions.map((option) => (
-                <button className={contentCategory === option ? styles.activeFilter : ''} key={option} type="button" onClick={() => setContentCategory(option)}>{option}</button>
-              ))}
-            </div>
-          </details>          <details name="blog-filters" className={styles.filterGroup}>
             <summary>Service <span aria-hidden="true">+</span></summary>
             <div className={styles.filterOptions}>
-              <button className={service === 'All' ? styles.activeFilter : ''} type="button" onClick={() => setService('All')}>All services</button>
               {serviceOptions.map((option) => (
-                <button className={service === option ? styles.activeFilter : ''} key={option} type="button" onClick={() => setService(option)}>{option}</button>
+                <button className={service === option ? styles.activeFilter : ''} key={option} type="button" onClick={() => setService((prev) => (prev === option ? 'All' : option))}>{option}</button>
               ))}
             </div>
           </details>
@@ -214,9 +204,17 @@ export function BlogCollection({articles}: {articles: BlogCollectionItem[]}) {
           <details name="blog-filters" className={styles.filterGroup}>
             <summary>Industry <span aria-hidden="true">+</span></summary>
             <div className={styles.filterOptions}>
-              <button className={industry === 'All' ? styles.activeFilter : ''} type="button" onClick={() => setIndustry('All')}>All industries</button>
               {industryOptions.map((option) => (
-                <button className={industry === option ? styles.activeFilter : ''} key={option} type="button" onClick={() => setIndustry(option)}>{option}</button>
+                <button className={industry === option ? styles.activeFilter : ''} key={option} type="button" onClick={() => setIndustry((prev) => (prev === option ? 'All' : option))}>{option}</button>
+              ))}
+            </div>
+          </details>
+
+          <details name="blog-filters" className={styles.filterGroup}>
+            <summary>Content focus <span aria-hidden="true">+</span></summary>
+            <div className={styles.filterOptions}>
+              {contentCategoryOptions.map((option) => (
+                <button className={contentCategory === option ? styles.activeFilter : ''} key={option} type="button" onClick={() => setContentCategory((prev) => (prev === option ? 'All' : option))}>{option}</button>
               ))}
             </div>
           </details>
@@ -224,9 +222,8 @@ export function BlogCollection({articles}: {articles: BlogCollectionItem[]}) {
           <details name="blog-filters" className={styles.filterGroup}>
             <summary>Blog type <span aria-hidden="true">+</span></summary>
             <div className={styles.filterOptions}>
-              <button className={blogType === 'All' ? styles.activeFilter : ''} type="button" onClick={() => setBlogType('All')}>All blog types</button>
               {blogTypeOptions.map((option) => (
-                <button className={blogType === option ? styles.activeFilter : ''} key={option} type="button" onClick={() => setBlogType(option)}>{option}</button>
+                <button className={blogType === option ? styles.activeFilter : ''} key={option} type="button" onClick={() => setBlogType((prev) => (prev === option ? 'All' : option))}>{option}</button>
               ))}
             </div>
           </details>

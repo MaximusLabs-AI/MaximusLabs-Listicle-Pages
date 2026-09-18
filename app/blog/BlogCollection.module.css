@@ -131,14 +131,15 @@
   cursor: pointer;
 }
 
-.filterGroup {border-bottom: 1px solid #e2e8f0}
-.filterGroup:last-child {border-bottom: 0}
+.filterGroup {margin-bottom: 6px}
+.filterGroup:last-child {margin-bottom: 0}
 .filterGroup summary {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 18px;
-  color: #334155;
+  padding: 14px 18px;
+  background: #1d4ed8;
+  color: #fff;
   font: 700 10px var(--sans);
   letter-spacing: .1em;
   text-transform: uppercase;
@@ -146,9 +147,9 @@
   list-style: none;
 }
 .filterGroup summary::-webkit-details-marker {display: none}
-.filterGroup summary:hover {background: #f8fafc; color: #1d4ed8}
+.filterGroup summary:hover {background: #1a45c2; color: #fff}
 .filterGroup summary:focus-visible {outline: 2px solid #449afb; outline-offset: -2px}
-.filterGroup summary span {color: #2563eb; font-size: 18px; line-height: 1; transition: transform .15s ease}
+.filterGroup summary span {color: #fff; font-size: 18px; line-height: 1; transition: transform .15s ease}
 .filterGroup[open] summary span {transform: rotate(45deg)}
 .filterOptions {padding: 0 10px 14px}
 .filterOptions button {
@@ -197,7 +198,15 @@
   gap: 48px 28px;
 }
 
-.card {min-width: 0}
+.card {
+  min-width: 0;
+  border: 1px solid #cdd6ea;
+  background: #fff;
+  overflow: hidden;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.card:hover {border-color: #1d4ed8; box-shadow: 0 8px 24px #001c641a}
 
 .cardLink {
   display: flex;
@@ -262,6 +271,7 @@
 .cardContent {
   display: flex;
   align-items: flex-start;
+  padding: 0 18px;
   flex-direction: column;
   flex: 1;
 }
@@ -299,6 +309,7 @@
   gap: 12px;
   align-items: center;
   margin-top: 22px;
+  padding: 0 18px 20px;
   color: #0f172a;
   font-family: var(--sans);
 }
