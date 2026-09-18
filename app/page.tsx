@@ -1,28 +1,27 @@
-import Link from 'next/link'
+import type {Metadata} from 'next'
 
 import {sanityClient} from '@/sanity/lib/client'
-import {listicleIndexQuery} from '@/sanity/lib/queries'
+import {blogCollectionQuery} from '@/sanity/lib/queries'
+import {BookCallCta} from '@/app/components/BookCallCta'
+import {SiteFooter} from '@/app/components/SiteFooter'
+import {SiteHeader} from '@/app/components/SiteHeader'
+
+import {BlogCollection, type BlogCollectionItem} from './blog/BlogCollection'
+
+export const metadata: Metadata = {
+  title: 'Rethinking How the Internet Finds You | MaximusLabs.ai',
+  description: 'Research, comparisons, and practical guidance for AEO, GEO, AI search, and technical SEO.',
+}
 
 export default async function HomePage() {
-  const pages = await sanityClient.fetch(listicleIndexQuery)
+  const articles = await sanityClient.fetch<BlogCollectionItem[]>(blogCollectionQuery)
 
   return (
-    <main className="site-index">
-      <p className="eyebrow">MaximusLabs.ai</p>
-      <h1>Listicle pages</h1>
-      <p className="index-dek">Reusable evidence-led directories managed in Sanity.</p>
-      <div className="index-list">
-        {pages.length ? (
-          pages.map((page: { _id: string; title: string; slug: string; verticalLabel?: string; editorialStatus?: string }) => (
-            <Link key={page._id} href={`/listicles/${page.slug}`}>
-              <strong>{page.title}</strong>
-              <span>{page.verticalLabel} · {page.editorialStatus || 'status not set'}</span>
-            </Link>
-          ))
-        ) : (
-          <p>No listicle documents have been imported yet. Open <Link href="/studio">Sanity Studio</Link> or run the workbook importer.</p>
-        )}
-      </div>
-    </main>
+    <>
+      <SiteHeader />
+      <BlogCollection articles={articles} />
+      <BookCallCta />
+      <SiteFooter />
+    </>
   )
 }

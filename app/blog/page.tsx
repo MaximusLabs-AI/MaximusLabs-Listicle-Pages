@@ -1,27 +1,6 @@
-import type {Metadata} from 'next'
+import {redirect} from 'next/navigation'
 
-import {sanityClient} from '@/sanity/lib/client'
-import {blogCollectionQuery} from '@/sanity/lib/queries'
-import {BookCallCta} from '@/app/components/BookCallCta'
-import {SiteFooter} from '@/app/components/SiteFooter'
-import {SiteHeader} from '@/app/components/SiteHeader'
-
-import {BlogCollection, type BlogCollectionItem} from './BlogCollection'
-
-export const metadata: Metadata = {
-  title: 'Rethinking How the Internet Finds You | MaximusLabs.ai',
-  description: 'Research, comparisons, and practical guidance for AEO, GEO, AI search, and technical SEO.',
-}
-
-export default async function BlogPage() {
-  const articles = await sanityClient.fetch<BlogCollectionItem[]>(blogCollectionQuery)
-
-  return (
-    <>
-      <SiteHeader />
-      <BlogCollection articles={articles} />
-      <BookCallCta />
-      <SiteFooter />
-    </>
-  )
+// The collection now lives at the root; keep /blog working by redirecting.
+export default function BlogIndexRedirect() {
+  redirect('/')
 }

@@ -26,10 +26,10 @@ export async function POST(request: NextRequest) {
     }
 
     revalidatePath('/', 'page')
-    revalidatePath('/blog', 'page')
-    revalidatePath('/listicles/[slug]', 'page')
-    if (body._type === 'listiclePage' && body.slug) revalidatePath(`/listicles/${body.slug}`)
-    if (body._type === 'infoArticle' && body.slug) revalidatePath(`/blog/${body.slug}`)
+    revalidatePath('/blog/[slug]', 'page')
+    if ((body._type === 'listiclePage' || body._type === 'infoArticle') && body.slug) {
+      revalidatePath(`/blog/${body.slug}`)
+    }
 
     return NextResponse.json({
       revalidated: true,

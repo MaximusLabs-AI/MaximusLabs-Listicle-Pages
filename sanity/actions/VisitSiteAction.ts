@@ -14,8 +14,7 @@ export const VisitSiteAction: DocumentActionComponent = (props) => {
     disabled: !slug,
     onHandle: () => {
       if (!slug) return
-      const prefix = props.type === 'listiclePage' ? '/listicles' : '/blog'
-      const pageUrl = new URL(`${prefix}/${encodeURIComponent(slug)}`, window.location.origin)
+      const pageUrl = new URL(`/blog/${encodeURIComponent(slug)}`, window.location.origin)
       window.open(pageUrl.toString(), '_blank', 'noopener,noreferrer')
     },
   }

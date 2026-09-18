@@ -207,7 +207,7 @@ function priorityScore(article: BlogCollectionItem): number {
 function ArticleCard({article, keyword}: {article: BlogCollectionItem; keyword: string}) {
   return (
     <article className={styles.card}>
-      <Link className={styles.cardLink} href={article.href || `/listicles/${article.slug}`}>
+      <Link className={styles.cardLink} href={article.href || `/blog/${article.slug}`}>
         <div className={styles.cardImage}>
           <div className={`${styles.imageFallback} ${styles[`coverVariant${getCoverVariant(article)}`]}`} aria-hidden="true">
             <i className={styles.coverGrid} />

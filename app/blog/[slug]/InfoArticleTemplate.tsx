@@ -97,7 +97,7 @@ export function InfoArticleTemplate({article}: {article: InfoArticleDocument}) {
     <div className={styles.page}>
       <nav className={styles.utilityNav}>
         <div className={styles.wrap}>
-          <Link href="/blog">All resources</Link>
+          <Link href="/">All resources</Link>
           <span>Informational article</span>
         </div>
       </nav>
@@ -107,7 +107,7 @@ export function InfoArticleTemplate({article}: {article: InfoArticleDocument}) {
           <nav className={styles.breadcrumbs} aria-label="Breadcrumb">
             <Link href="/">MaximusLabs.ai</Link>
             <span aria-hidden="true">/</span>
-            <Link href="/blog">Resources</Link>
+            <Link href="/">Resources</Link>
             <span aria-hidden="true">/</span>
             <span>{serviceLabels[article.service || ''] || 'AI search insights'}</span>
           </nav>
