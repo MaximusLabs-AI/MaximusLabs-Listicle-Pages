@@ -71,7 +71,7 @@ const NAV: NavItem[] = [
   },
 ]
 
-function MaximusMark() {
+export function MaximusMark() {
   return (
     <svg className="ml-brand-icon" viewBox="0 0 48 48" aria-hidden="true">
       <path d="M37 23.9998H30.064C26.715 23.9998 24 26.7148 24 30.0638V47.4268C24 47.6458 24.26 47.7598 24.421 47.6108L37 35.9998V23.9998Z" fill="#449AFB" />
@@ -109,7 +109,7 @@ export function SiteHeader() {
                   {item.label}
                   <Chevron />
                 </span>
-                <div className="ml-nav-pop">
+                <div className={item.cols.length > 1 ? 'ml-nav-pop ml-nav-pop--mega' : 'ml-nav-pop'}>
                   <div className="ml-np-inner">
                     {item.cols.map((col, ci) => (
                       <div className="ml-np-col" key={ci}>
@@ -129,8 +129,7 @@ export function SiteHeader() {
           </nav>
         </div>
         <div className="ml-nav-right">
-          <a className="ml-nav-plain" href={`${SITE}/pricing`}>Pricing</a>
-          <a className="ml-nav-cta" href={`${SITE}/contact-us`}>Contact us</a>
+          <a className="ml-nav-cta" href={`${SITE}/contact-us`}>Contact Us</a>
         </div>
       </div>
     </header>

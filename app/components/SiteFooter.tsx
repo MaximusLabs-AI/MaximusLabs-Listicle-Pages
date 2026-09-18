@@ -1,5 +1,7 @@
 import './site-chrome.css'
 
+import {MaximusMark} from './SiteHeader'
+
 type FNode =
   | {kind: 'head'; text: string; sub?: boolean}
   | {kind: 'link'; text: string; href: string}
@@ -88,15 +90,15 @@ export function SiteFooter() {
         <div className="ml-mf-top">
           <div className="ml-mf-brand">
             <a className="ml-brand" href={`${SITE}/`} aria-label="Maximus Labs">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img className="ml-brand-logo" src="/brand/maximus-wordmark.svg" alt="Maximus Labs" width={222} height={40} />
+              <MaximusMark />
+              <span className="ml-mf-wordmark">Maximus Labs</span>
             </a>
             <p className="ml-mf-intro">
               Maximus Labs helps you rank on Google, ChatGPT, and beyond. Reach out today to build your AI-first, SEO-strong growth engine.
             </p>
           </div>
           <div className="ml-mf-actions">
-            <a className="ml-nav-cta" href={`${SITE}/contact-us`}>Contact us</a>
+            <a className="ml-nav-cta" href={`${SITE}/contact-us`}>Contact Us</a>
             <a className="ml-mf-li" href="https://www.linkedin.com/company/maximus-labs-ai/" aria-label="LinkedIn" target="_blank" rel="noopener">
               <LinkedInIcon />
             </a>
