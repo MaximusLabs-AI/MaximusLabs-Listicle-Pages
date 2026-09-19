@@ -28,9 +28,10 @@ const serviceOptions = ['AEO', 'GEO & AI SEO', 'B2B SEO', 'Technical SEO', 'Agen
 const industryOptions = ['B2B SaaS', 'Healthcare', 'Finance & FinTech', 'Cybersecurity', 'Ecommerce', 'Sales & CRM', 'HR & People', 'Legal', 'Supply Chain', 'Education'] as const
 const blogTypeOptions = ['Informational', 'Listicle', 'Research & Data', 'How-to Guides', 'Case Studies', 'Tools & Platforms'] as const
 const contentCategoryOptions = ['AI Search Fundamentals', 'Strategy & Frameworks', 'Technical SEO & Implementation', 'Measurement & Analytics', 'Ecommerce & Agentic Commerce', 'Industry Applications', 'Case Studies & Research', 'Agency Selection', 'Tools & Platforms'] as const
-// The AI Search 101 core disciplines — the discipline cards on
-// maximuslabs.ai/ai-search-101 — surfaced here as a familiar lens for readers.
-const aiSearchOptions = ['GEO', 'AEO', 'Agentic Commerce', 'Agentic SEO', 'SEO'] as const
+// The AI Search 101 "Explore by area" facets, shown under the "Topics" filter.
+// Each is matched on hidden keywords (see getAiSearches); only these four labels
+// appear in the UI — the keyword lists are for pattern matching only.
+const aiSearchOptions = ['Platform', 'Technical', 'Strategies', 'Future'] as const
 
 const authorImageUrl = 'https://cdn.prod.website-files.com/688e61db3da1f79ad7b45858/69086a39359a85bbb951e01d_Minimalist%20Square%20Photo%20Instagram%20Post%20(1).png'
 
@@ -48,10 +49,7 @@ const shownServiceOptions: readonly Service[] = ['AEO', 'GEO & AI SEO', 'Agentic
 const shownIndustryOptions: readonly Industry[] = ['B2B SaaS', 'Cybersecurity', 'Healthcare', 'Finance & FinTech', 'Ecommerce', 'Sales & CRM', 'Education']
 const shownContentCategoryOptions: readonly ContentCategory[] = []
 const shownBlogTypeOptions: readonly BlogType[] = []
-// All five AI Search 101 disciplines are defined above; only those with
-// matching content are shown. Agentic SEO currently matches 0 of the published
-// cards, so it is held out (add it back here once such content ships).
-const shownAiSearchOptions: readonly AiSearch[] = ['GEO', 'AEO', 'Agentic Commerce', 'SEO']
+const shownAiSearchOptions: readonly AiSearch[] = ['Platform', 'Technical', 'Strategies', 'Future']
 
 // Multi-topic classification: an article can belong to several services and
 // industries at once (e.g. "Best AEO Agencies for Cybersecurity" is both AEO
@@ -147,19 +145,23 @@ function getContentCategory(article: BlogCollectionItem): ContentCategory {
   if (/what is|decoded|fundamental|aeo vs seo|geo vs/.test(text)) return 'AI Search Fundamentals'
   return 'Strategy & Frameworks'
 }
-// AI Search 101 disciplines an article touches (multi-topic, like services), so
-// a piece surfaces under every relevant discipline it covers.
+// The AI Search 101 "Explore by area" facet(s) an article touches, matched on
+// the hidden keywords specified for each (multi-topic: a piece can surface under
+// several facets). Only Platform/Technical/Strategies/Future appear in the UI.
 function getAiSearches(article: BlogCollectionItem): AiSearch[] {
   const out: AiSearch[] = []
   const add = (value: AiSearch) => {
     if (!out.includes(value)) out.push(value)
   }
   const text = `${article.serviceName || ''} ${article.title} ${article.dek || ''}`.toLowerCase()
-  if (/answer engine|\baeo\b/.test(text)) add('AEO')
-  if (/generative engine|\bgeo\b|ai seo|ai search|ai overview|ai citation|chatgpt|perplexity|\bllm/.test(text)) add('GEO')
-  if (/agentic commerce|shopping agent|instant checkout|ai commerce|\bcheckout\b/.test(text)) add('Agentic Commerce')
-  if (/agentic seo|ai agent|autonomous agent|agent-?driven/.test(text)) add('Agentic SEO')
-  if (/\bseo\b|search engine optim|schema|crawler|robots\.txt|llms\.txt|indexing/.test(text)) add('SEO')
+  // Platform: named AI engines / assistants
+  if (/chatgpt|openai|\bgpt-?\d|\bclaude\b|anthropic|perplexity|gemini|google ai|ai overview|\bcopilot\b|apple intelligence|bing chat|meta ai|deepseek|\bgrok\b/.test(text)) add('Platform')
+  // Technical: content formatting, AI crawlers, entities, structured data, MCP
+  if (/content formatting|structured data|\bschema\b|ai crawler|crawler optimization|robots\.txt|llms\.txt|entit(?:y|ies)|knowledge graph|\bmcp\b/.test(text)) add('Technical')
+  // Strategies: citations, question research, EEAT, zero-click, competitor analysis
+  if (/citation|question research|\beeat\b|e-?e-?a-?t|zero-?click|competitor analysis|competitive analysis/.test(text)) add('Strategies')
+  // Future: agentic / conversational AI, personalization, AI search evolution
+  if (/agentic ai|conversational ai|personali[sz]ation|ai search evolution|evolution of|future of|next-?gen|emerging/.test(text)) add('Future')
   return out
 }
 
@@ -374,7 +376,7 @@ export function BlogCollection({articles}: {articles: BlogCollectionItem[]}) {
 
           {shownAiSearchOptions.length > 0 && (
             <details name="blog-filters" className={styles.filterGroup}>
-              <summary>AI Search <span aria-hidden="true">+</span></summary>
+              <summary>Topics <span aria-hidden="true">+</span></summary>
               <div className={styles.filterOptions}>
                 {shownAiSearchOptions.map((option) => (
                   <button className={aiSearch === option ? styles.activeFilter : ''} key={option} type="button" onClick={() => setAiSearch((prev) => (prev === option ? 'All' : option))}>{option}</button>
