@@ -134,9 +134,11 @@
 
 .toc {
   position: sticky;
-  top: 32px;
+  /* Clear the 93px global sticky header so the TOC (and its heading) is never
+     hidden behind it, and cap the height to the space below the header. */
+  top: 108px;
   display: flex;
-  max-height: calc(100vh - 64px);
+  max-height: calc(100vh - 132px);
   padding: 0 0 18px;
   overflow-y: auto;
   border-top: 4px solid #1d4ed8;
@@ -146,8 +148,10 @@
 }
 
 .toc strong {
+  position: sticky;
+  top: 0;
+  z-index: 1;
   padding: 11px 14px;
-  margin-bottom: 8px;
   background: #001c64;
   color: #fff;
   font-size: 12px;

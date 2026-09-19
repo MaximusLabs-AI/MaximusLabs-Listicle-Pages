@@ -64,7 +64,7 @@ button {color: inherit}
 .quick-answer > a {display: block; padding: 9px 12px; border-top: 1px solid var(--line); color: var(--accent); font: 700 11.5px var(--sans); text-decoration: none}
 
 .page-shell {display: grid; grid-template-columns: 236px minmax(0,1fr); gap: 36px; align-items: start; margin-top: 22px}
-.toc {position: sticky; top: 58px; display: flex; max-height: calc(100vh - 80px); overflow-y: auto; border: 1px solid var(--ink); flex-direction: column; font: 12px/1.35 var(--sans)}
+.toc {position: sticky; top: 108px; display: flex; max-height: calc(100vh - 132px); overflow-y: auto; border: 1px solid var(--ink); flex-direction: column; font: 12px/1.35 var(--sans)}
 .toc b {padding: 10px 12px; background: var(--grad-header); color: var(--paper); letter-spacing: .07em; text-transform: uppercase}
 .toc a {padding: 7px 12px; border-top: 1px solid var(--hair); color: #444; text-decoration: none}
 .toc a:hover {color: var(--accent)}
@@ -290,6 +290,9 @@ body {background: var(--page)}
   box-shadow: var(--shadow-sm);
 }
 .toc b {
+  position: sticky;
+  top: 0;
+  z-index: 1;
   border-bottom: 1px solid var(--hair);
   background: var(--fill);
   color: #334155;
