@@ -5,7 +5,8 @@
 }
 
 .wrap {
-  width: min(1180px, calc(100% - 48px));
+  /* Wide enough for the three-column shell: TOC + content + author card. */
+  width: min(1320px, calc(100% - 48px));
   margin: 0 auto;
 }
 
@@ -126,9 +127,8 @@
 
 .articleShell {
   display: grid;
-  grid-template-columns: 220px minmax(0, 760px);
-  gap: 64px;
-  justify-content: center;
+  grid-template-columns: 220px minmax(0, 1fr) 300px;
+  gap: 48px;
   padding: 68px 0 56px;
 }
 

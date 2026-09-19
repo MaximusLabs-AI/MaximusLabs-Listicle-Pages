@@ -1,5 +1,7 @@
 import Link from 'next/link'
 
+import {AuthorCta} from '@/app/components/AuthorCta'
+
 import styles from './InfoArticleTemplate.module.css'
 
 export type InfoArticleBlock = {
@@ -139,6 +141,8 @@ export function InfoArticleTemplate({article}: {article: InfoArticleDocument}) {
           <article className={styles.article}>
             {blocks.map((block, index) => <ArticleBlock block={block} index={index} key={block._key || String(index)} />)}
           </article>
+
+          <AuthorCta />
         </div>
       </main>
     </div>

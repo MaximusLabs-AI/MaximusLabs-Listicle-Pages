@@ -26,7 +26,7 @@ body {margin: 0; background: var(--paper); color: var(--ink); font-family: var(-
 a {color: var(--ink)}
 button, input, textarea {font: inherit}
 button {color: inherit}
-.wrap {width: min(1240px, calc(100% - 48px)); margin: 0 auto}
+.wrap {width: min(1320px, calc(100% - 48px)); margin: 0 auto}
 
 .view-nav {position: sticky; top: 0; z-index: 30; border-bottom: 1px solid var(--ink); background: rgba(255,255,255,.97); font-family: var(--sans); font-size: 12px}
 .view-nav .wrap {display: flex; overflow-x: auto}
@@ -63,7 +63,7 @@ button {color: inherit}
 .quick-answer li span {display: block; margin-top: 3px; color: var(--ash); font: 11.5px/1.4 var(--sans)}
 .quick-answer > a {display: block; padding: 9px 12px; border-top: 1px solid var(--line); color: var(--accent); font: 700 11.5px var(--sans); text-decoration: none}
 
-.page-shell {display: grid; grid-template-columns: 236px minmax(0,1fr); gap: 36px; align-items: start; margin-top: 22px; padding-bottom: 56px}
+.page-shell {display: grid; grid-template-columns: 236px minmax(0,1fr) 300px; gap: 36px; align-items: start; margin-top: 22px; padding-bottom: 56px}
 .toc {position: sticky; top: 108px; display: flex; max-height: calc(100vh - 132px); overflow-y: auto; border: 1px solid var(--ink); flex-direction: column; font: 12px/1.35 var(--sans)}
 .toc b {padding: 10px 12px; background: var(--grad-header); color: var(--paper); letter-spacing: .07em; text-transform: uppercase}
 .toc a {padding: 7px 12px; border-top: 1px solid var(--hair); color: #444; text-decoration: none}

@@ -1,0 +1,71 @@
+/* Sticky right column; sits below the 93px global header like the TOC. */
+.wrapper {
+  position: sticky;
+  top: 108px;
+  align-self: start;
+}
+
+.card {
+  border: 1px solid #e4e6f0;
+  border-radius: 16px;
+  background: #fff;
+  padding: 26px 24px 28px;
+  box-shadow: 0 1px 3px #0000000f;
+}
+
+.photo {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #cfe0ff;
+  box-shadow: 0 0 0 1px #dfe3f0;
+}
+
+.name {
+  margin: 16px 0 2px;
+  color: #0f172a;
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.role {
+  margin: 0 0 14px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.bio {
+  margin: 0 0 20px;
+  color: #475569;
+  font-size: 14px;
+  line-height: 1.62;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 12px 18px;
+  border-radius: 10px;
+  background: #001c64;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+}
+
+.button:hover {
+  background: #0a2a86;
+}
+
+/* On stacked/mobile layouts the card is no longer a sticky side column. */
+@media (max-width: 900px) {
+  .wrapper {
+    position: static;
+    max-width: 420px;
+  }
+}

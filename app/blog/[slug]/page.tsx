@@ -3,7 +3,6 @@ import {notFound} from 'next/navigation'
 
 import {sanityClient} from '@/sanity/lib/client'
 import {infoArticleQuery, listiclePageQuery} from '@/sanity/lib/queries'
-import {AboutAuthor} from '@/app/components/AboutAuthor'
 import {RelatedPosts} from '@/app/components/RelatedPosts'
 import {SiteFooter} from '@/app/components/SiteFooter'
 import {SiteHeader} from '@/app/components/SiteHeader'
@@ -60,9 +59,9 @@ export default async function BlogEntryPage({params}: Props) {
   const entry = await resolveEntry(slug)
   if (!entry) notFound()
 
-  // Every landing page gets the global site chrome (header + footer) plus the
-  // shared About-the-Author and Related-Posts sections. The listicle template
-  // keeps its own in-page nav/breadcrumb; the article template its own byline.
+  // Every landing page gets the global site chrome (header + footer) and the
+  // Related-Posts section. The author/booking card is a sticky right column
+  // inside each template's content shell (like the AI Search 101 pages).
   const body =
     entry.kind === 'listicle' ? (
       <ListicleTemplate page={entry.page} />
@@ -74,7 +73,6 @@ export default async function BlogEntryPage({params}: Props) {
     <>
       <SiteHeader />
       {body}
-      <AboutAuthor />
       <RelatedPosts slug={slug} />
       <SiteFooter />
     </>
