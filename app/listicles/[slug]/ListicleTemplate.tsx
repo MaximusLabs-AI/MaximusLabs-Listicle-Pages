@@ -1,6 +1,6 @@
 'use client'
 
-import {useMemo, useState} from 'react'
+import {useEffect, useMemo, useRef, useState} from 'react'
 
 type RecordValue = Record<string, any>
 
@@ -227,6 +227,18 @@ function Methodology({page}: {page: RecordValue}) {
 
 export function ListicleTemplate({page}: {page: RecordValue}) {
   const [profileId, setProfileId] = useState<string | null>(null)
+  const isFirstRender = useRef(true)
+  // Opening a full profile (or going back) swaps the view in place, so the
+  // browser keeps the old scroll position — a profile opened from a card far
+  // down the page would otherwise appear scrolled into its middle. Reset to the
+  // top on every switch, but not on the initial render (preserve #anchor links).
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false
+      return
+    }
+    window.scrollTo(0, 0)
+  }, [profileId])
   const entries = useMemo(() => safeArray(page.entries).slice().sort((a, b) => a.rank - b.rank), [page.entries])
   const template = page.template || {}
   const selected = entries.find((entry) => entry.agency?._id === profileId)
