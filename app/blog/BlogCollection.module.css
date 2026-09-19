@@ -7,10 +7,10 @@
 
 .heading {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   flex-direction: column;
-  margin-bottom: 32px;
-  text-align: left;
+  margin-bottom: 36px;
+  text-align: center;
 }
 
 .heading h1 {
@@ -30,7 +30,7 @@
 
 .subheading {
   max-width: 60ch;
-  margin: 12px 0 20px;
+  margin: 12px auto 20px;
   color: #5a5c76;
   font-size: clamp(16px, 1rem + .2vw, 18px);
   font-weight: 400;
@@ -89,19 +89,19 @@
   align-items: start;
 }
 
-/* Sticky column pinned near the top so the whole filter is visible in the first
-   fold on landing and stays visible on the left as the page scrolls, until the
-   grid row (the results column) ends. */
+/* On landing the filter sits at the top of its column, fully visible in the
+   first fold. As the cards scroll past, it sticks vertically centered
+   (50vh minus ~half the card height), until the results column ends. */
 .filtersWrap {
   position: sticky;
-  top: 24px;
+  top: calc(50vh - 155px);
 }
 
 .filters {
   border-top: 4px solid #1d4ed8;
   background: #fff;
   box-shadow: 0 1px 3px #0000001a;
-  max-height: calc(100vh - 48px);
+  max-height: calc(100vh - 32px);
   overflow-y: auto;
 }
 
