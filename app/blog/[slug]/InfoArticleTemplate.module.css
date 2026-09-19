@@ -129,7 +129,7 @@
   grid-template-columns: 220px minmax(0, 760px);
   gap: 64px;
   justify-content: center;
-  padding: 68px 0 96px;
+  padding: 68px 0 56px;
 }
 
 .toc {
