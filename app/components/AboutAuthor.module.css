@@ -1,0 +1,86 @@
+.section {
+  background: #fff;
+  border-top: 1px solid #e6e9f2;
+}
+
+.inner {
+  width: min(1180px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 56px 0 8px;
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 48px;
+  align-items: start;
+}
+
+.identity {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 20px;
+  object-fit: cover;
+  border: 1px solid #dfe3f0;
+}
+
+.namePlate {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.namePlate strong {
+  color: #0f172a;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.namePlate span {
+  color: #5a5c76;
+  font-size: 15px;
+}
+
+.body {
+  min-width: 0;
+}
+
+.eyebrow {
+  margin: 4px 0 14px;
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.paragraph {
+  margin: 0 0 16px;
+  color: #3b3f56;
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+.slogan {
+  margin: 20px 0 0;
+  color: #001c64;
+  font-size: 18px;
+  font-weight: 700;
+  font-style: italic;
+}
+
+@media (max-width: 760px) {
+  .inner {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 40px 0 4px;
+  }
+  .paragraph {
+    font-size: 16px;
+  }
+}

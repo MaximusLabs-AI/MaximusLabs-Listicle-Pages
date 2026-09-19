@@ -3,6 +3,8 @@ import {notFound} from 'next/navigation'
 
 import {sanityClient} from '@/sanity/lib/client'
 import {infoArticleQuery, listiclePageQuery} from '@/sanity/lib/queries'
+import {AboutAuthor} from '@/app/components/AboutAuthor'
+import {RelatedPosts} from '@/app/components/RelatedPosts'
 import {SiteFooter} from '@/app/components/SiteFooter'
 import {SiteHeader} from '@/app/components/SiteHeader'
 import {ListicleTemplate} from '@/app/listicles/[slug]/ListicleTemplate'
@@ -58,16 +60,22 @@ export default async function BlogEntryPage({params}: Props) {
   const entry = await resolveEntry(slug)
   if (!entry) notFound()
 
-  // Listicle pages are self-contained (own masthead/nav/footer); articles use
-  // the shared site chrome.
-  if (entry.kind === 'listicle') {
-    return <ListicleTemplate page={entry.page} />
-  }
+  // Every landing page gets the global site chrome (header + footer) plus the
+  // shared About-the-Author and Related-Posts sections. The listicle template
+  // keeps its own in-page nav/breadcrumb; the article template its own byline.
+  const body =
+    entry.kind === 'listicle' ? (
+      <ListicleTemplate page={entry.page} />
+    ) : (
+      <InfoArticleTemplate article={entry.article} />
+    )
 
   return (
     <>
       <SiteHeader />
-      <InfoArticleTemplate article={entry.article} />
+      {body}
+      <AboutAuthor />
+      <RelatedPosts slug={slug} />
       <SiteFooter />
     </>
   )

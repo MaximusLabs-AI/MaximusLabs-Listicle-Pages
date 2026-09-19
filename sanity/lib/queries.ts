@@ -32,6 +32,19 @@ export const blogCollectionQuery = defineQuery(`
   }
 `)
 
+export const relatedPostsQuery = defineQuery(`
+  *[_type in ["listiclePage", "infoArticle"] && slug.current != $slug]
+    | order(coalesce(publishedAt, reviewedAt) desc) [0...4] {
+    _id,
+    _type,
+    title,
+    "slug": slug.current,
+    "dek": coalesce(dek, excerpt),
+    "serviceName": coalesce(serviceName, service),
+    "href": "/blog/" + slug.current
+  }
+`)
+
 export const infoArticleQuery = defineQuery(`
   *[_type == "infoArticle" && slug.current == $slug][0] {
     ...,
