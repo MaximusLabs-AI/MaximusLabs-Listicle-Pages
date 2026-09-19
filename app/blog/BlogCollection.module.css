@@ -161,9 +161,17 @@
 .filterGroup summary::-webkit-details-marker {display: none}
 .filterGroup summary:hover {background: #1d4ed8; color: #fff}
 .filterGroup summary:focus-visible {outline: 2px solid #449afb; outline-offset: -2px}
-.filterGroup summary span {color: #2563eb; font-size: 18px; line-height: 1; transition: transform .15s ease}
-.filterGroup summary:hover span {color: #fff}
-.filterGroup[open] summary span {transform: rotate(45deg)}
+/* Chevron drawn from two borders: points down (v) when closed, up (^) when open. */
+.chevron {
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid #2563eb;
+  border-bottom: 2px solid #2563eb;
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform .15s ease, border-color .15s ease;
+}
+.filterGroup summary:hover .chevron {border-color: #fff}
+.filterGroup[open] summary .chevron {transform: translateY(1px) rotate(225deg)}
 .filterOptions {padding: 2px 12px 16px}
 .filterOptions button {
   display: block;

@@ -28,7 +28,7 @@ const serviceOptions = ['AEO', 'GEO & AI SEO', 'B2B SEO', 'Technical SEO', 'Agen
 const industryOptions = ['B2B SaaS', 'Healthcare', 'Finance & FinTech', 'Cybersecurity', 'Ecommerce', 'Sales & CRM', 'HR & People', 'Legal', 'Supply Chain', 'Education'] as const
 const blogTypeOptions = ['Informational', 'Listicle', 'Research & Data', 'How-to Guides', 'Case Studies', 'Tools & Platforms'] as const
 const contentCategoryOptions = ['AI Search Fundamentals', 'Strategy & Frameworks', 'Technical SEO & Implementation', 'Measurement & Analytics', 'Ecommerce & Agentic Commerce', 'Industry Applications', 'Case Studies & Research', 'Agency Selection', 'Tools & Platforms'] as const
-// The AI Search 101 "Explore by area" facets, shown under the "Topics" filter.
+// The AI Search 101 "Explore by area" facets, shown under the "Areas" filter.
 // Each is matched on hidden keywords (see getAiSearches); only these four labels
 // appear in the UI — the keyword lists are for pattern matching only.
 const aiSearchOptions = ['Platform', 'Technical', 'Strategies', 'Future'] as const
@@ -366,7 +366,7 @@ export function BlogCollection({articles}: {articles: BlogCollectionItem[]}) {
 
           {shownServiceOptions.length > 0 && (
             <details name="blog-filters" className={styles.filterGroup} open>
-              <summary>Service <span aria-hidden="true">+</span></summary>
+              <summary>Service <span className={styles.chevron} aria-hidden="true" /></summary>
               <div className={styles.filterOptions}>
                 {shownServiceOptions.map((option) => (
                   <button className={service === option ? styles.activeFilter : ''} key={option} type="button" onClick={() => setService((prev) => (prev === option ? 'All' : option))}>{option}</button>
@@ -377,7 +377,7 @@ export function BlogCollection({articles}: {articles: BlogCollectionItem[]}) {
 
           {shownAiSearchOptions.length > 0 && (
             <details name="blog-filters" className={styles.filterGroup}>
-              <summary>Topics <span aria-hidden="true">+</span></summary>
+              <summary>Areas <span className={styles.chevron} aria-hidden="true" /></summary>
               <div className={styles.filterOptions}>
                 {shownAiSearchOptions.map((option) => (
                   <button className={aiSearch === option ? styles.activeFilter : ''} key={option} type="button" onClick={() => setAiSearch((prev) => (prev === option ? 'All' : option))}>{option}</button>
@@ -388,7 +388,7 @@ export function BlogCollection({articles}: {articles: BlogCollectionItem[]}) {
 
           {shownIndustryOptions.length > 0 && (
             <details name="blog-filters" className={styles.filterGroup}>
-              <summary>Industry <span aria-hidden="true">+</span></summary>
+              <summary>Industry <span className={styles.chevron} aria-hidden="true" /></summary>
               <div className={styles.filterOptions}>
                 {shownIndustryOptions.map((option) => (
                   <button className={industry === option ? styles.activeFilter : ''} key={option} type="button" onClick={() => setIndustry((prev) => (prev === option ? 'All' : option))}>{option}</button>
@@ -399,7 +399,7 @@ export function BlogCollection({articles}: {articles: BlogCollectionItem[]}) {
 
           {shownContentCategoryOptions.length > 0 && (
             <details name="blog-filters" className={styles.filterGroup}>
-              <summary>Content focus <span aria-hidden="true">+</span></summary>
+              <summary>Content focus <span className={styles.chevron} aria-hidden="true" /></summary>
               <div className={styles.filterOptions}>
                 {shownContentCategoryOptions.map((option) => (
                   <button className={contentCategory === option ? styles.activeFilter : ''} key={option} type="button" onClick={() => setContentCategory((prev) => (prev === option ? 'All' : option))}>{option}</button>
@@ -410,7 +410,7 @@ export function BlogCollection({articles}: {articles: BlogCollectionItem[]}) {
 
           {shownBlogTypeOptions.length > 0 && (
             <details name="blog-filters" className={styles.filterGroup}>
-              <summary>Blog type <span aria-hidden="true">+</span></summary>
+              <summary>Blog type <span className={styles.chevron} aria-hidden="true" /></summary>
               <div className={styles.filterOptions}>
                 {shownBlogTypeOptions.map((option) => (
                   <button className={blogType === option ? styles.activeFilter : ''} key={option} type="button" onClick={() => setBlogType((prev) => (prev === option ? 'All' : option))}>{option}</button>
