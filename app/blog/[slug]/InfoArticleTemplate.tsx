@@ -1,6 +1,5 @@
-import Link from 'next/link'
-
 import {AuthorCta} from '@/app/components/AuthorCta'
+import {BLOG_BASE} from '@/app/lib/seo'
 
 import styles from './InfoArticleTemplate.module.css'
 
@@ -99,7 +98,7 @@ export function InfoArticleTemplate({article}: {article: InfoArticleDocument}) {
     <div className={styles.page}>
       <nav className={styles.utilityNav}>
         <div className={styles.wrap}>
-          <Link href="/blog">All articles</Link>
+          <a href={BLOG_BASE}>All articles</a>
           <span>Informational article</span>
         </div>
       </nav>
@@ -107,7 +106,7 @@ export function InfoArticleTemplate({article}: {article: InfoArticleDocument}) {
       <header className={styles.masthead}>
         <div className={styles.wrap}>
           <nav className={styles.breadcrumbs} aria-label="Breadcrumb">
-            <Link href="/blog">Blog</Link>
+            <a href={BLOG_BASE}>Blog</a>
             <span aria-hidden="true">/</span>
             <span>{serviceLabels[article.service || ''] || 'AI search insights'}</span>
           </nav>
