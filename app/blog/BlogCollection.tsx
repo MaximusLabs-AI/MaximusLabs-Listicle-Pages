@@ -199,7 +199,7 @@ function getListicleType(article: BlogCollectionItem): string {
 // trailing generic audience noun ("Companies") removed. The differentiating
 // vertical ("for B2B SaaS", "for Cybersecurity") is KEPT so two otherwise
 // identical listicles get distinct keywords.
-function getCoverKeyword(article: BlogCollectionItem): string {
+export function getCoverKeyword(article: BlogCollectionItem): string {
   const raw = (article.title || '').trim()
   let keyword = raw.split(/:\s|\s[|–—]\s/)[0].trim()
   keyword = keyword
@@ -230,7 +230,10 @@ function priorityScore(article: BlogCollectionItem): number {
   return score
 }
 
-function ArticleCard({article, keyword}: {article: BlogCollectionItem; keyword: string}) {
+export function ArticleCard({article, keyword}: {article: BlogCollectionItem; keyword?: string}) {
+  // The collection passes a de-duplicated keyword; standalone callers (e.g.
+  // RelatedPosts) omit it and the card derives one client-side.
+  const coverText = keyword ?? getCoverKeyword(article)
   return (
     <article className={styles.card}>
       <Link className={styles.cardLink} href={article.href || `/blog/${article.slug}`}>
@@ -238,7 +241,7 @@ function ArticleCard({article, keyword}: {article: BlogCollectionItem; keyword: 
           <div className={`${styles.imageFallback} ${styles[`coverVariant${getCoverVariant(article)}`]}`} aria-hidden="true">
             <i className={styles.coverGrid} />
             <i className={styles.coverShape} />
-            <strong>{keyword}</strong>
+            <strong>{coverText}</strong>
           </div>
         </div>
         <div className={styles.cardContent}>

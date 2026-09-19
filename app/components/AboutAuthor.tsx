@@ -8,7 +8,7 @@ const AUTHOR = {
   title: 'Founder & CEO, MaximusLabs',
   imageUrl:
     'https://cdn.prod.website-files.com/688e61db3da1f79ad7b45858/69086a39359a85bbb951e01d_Minimalist%20Square%20Photo%20Instagram%20Post%20(1).png',
-  slogan: 'Rank everywhere people search.',
+  slogan: 'Getting into the mind of AI',
   bio: [
     'Krishna Kaanth is the founder & CEO of MaximusLabs, an AI-search growth agency helping brands get found across Google, ChatGPT, Perplexity, and the other engines people now ask instead of searching.',
     'He and his team turn AEO, GEO, and technical SEO into one measurable growth engine — and publish the research, comparisons, and field-tested playbooks you find across this library.',

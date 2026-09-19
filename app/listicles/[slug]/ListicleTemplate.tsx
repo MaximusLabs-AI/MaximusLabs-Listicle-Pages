@@ -248,7 +248,6 @@ export function ListicleTemplate({page}: {page: RecordValue}) {
           <section className="content-section" id="also-considered"><span className="section-label">Also considered</span><h2>Which firms were researched but not ranked?</h2><p>Researched in full, below the line on this weighting.</p><div className="table-wrap"><table><thead><tr><th>Firm</th><th>Capability /70</th><th>Industry /30</th><th>Why it falls short here</th></tr></thead><tbody>{safeArray(page.alsoConsidered).map((item) => <tr key={item._key || item.playerId}><td>{item.url ? <a href={item.url} target="_blank" rel="nofollow noopener"><b>{item.name}</b></a> : <b>{item.name}</b>}<small>{item.home || item.whatTheyAre}</small></td><td>{item.capabilityScore}</td><td>{item.industryScore}</td><td>{item.reasonExcluded}</td></tr>)}</tbody></table></div></section>
         </div></div>
       </main>
-      <footer className="site-footer"><div className="wrap"><p><b>Publisher disclosure.</b> {page.publisherDisclosure}</p><p><b>On review data.</b> {template.defaultFooterReviewNote || page.footerReviewNote || 'Ratings appear only for platforms each firm is actually on.'}</p><p><b>On links.</b> {template.defaultFooterLinkNote || page.footerLinkNote || 'Every outbound link carries rel="nofollow".'}</p><p>Last reviewed {longDate(page.reviewedAt)}.</p></div></footer>
     </div>
   )
 }

@@ -4,7 +4,7 @@
 }
 
 .inner {
-  width: min(1180px, calc(100% - 48px));
+  width: min(1280px, calc(100% - 48px));
   margin: 0 auto;
   padding-top: 48px;
 }
@@ -17,71 +17,21 @@
   letter-spacing: -0.03em;
 }
 
+/* Reuses the collection ArticleCard; this is just the row that holds them. */
 .grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 24px;
+  gap: 28px;
+  align-items: start;
 }
 
-.card {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  text-decoration: none;
-}
-
-.cover {
-  display: flex;
-  align-items: flex-end;
-  aspect-ratio: 16 / 10;
-  padding: 18px;
-  border-radius: 12px;
-  overflow: hidden;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.card:hover .cover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 28px #001c6426;
-}
-
-.coverKeyword {
-  color: #fff;
-  font-size: 17px;
-  font-weight: 800;
-  line-height: 1.2;
-  letter-spacing: -0.01em;
-  text-shadow: 0 1px 10px #00000040;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.v1 {background: linear-gradient(150deg, #1d4ed8 0%, #001c64 100%);}
-.v2 {background: linear-gradient(150deg, #001c64 0%, #0b1220 100%);}
-.v3 {background: linear-gradient(150deg, #2563eb 0%, #0b3aa8 100%);}
-.v4 {background: linear-gradient(150deg, #003087 0%, #061a3f 100%);}
-
-.cardTitle {
-  margin: 0;
-  color: #101828;
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 1.4;
-}
-
-.card:hover .cardTitle {
-  color: #1d4ed8;
-}
-
-@media (max-width: 1000px) {
+@media (max-width: 1100px) {
   .grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-@media (max-width: 560px) {
+@media (max-width: 620px) {
   .grid {
     grid-template-columns: 1fr;
   }

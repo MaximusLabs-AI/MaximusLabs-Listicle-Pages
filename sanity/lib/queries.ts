@@ -32,6 +32,8 @@ export const blogCollectionQuery = defineQuery(`
   }
 `)
 
+// Same projection as blogCollectionQuery so related cards reuse the exact
+// collection ArticleCard. Four most-recent entries other than the current one.
 export const relatedPostsQuery = defineQuery(`
   *[_type in ["listiclePage", "infoArticle"] && slug.current != $slug]
     | order(coalesce(publishedAt, reviewedAt) desc) [0...4] {
@@ -39,8 +41,17 @@ export const relatedPostsQuery = defineQuery(`
     _type,
     title,
     "slug": slug.current,
-    "dek": coalesce(dek, excerpt),
     "serviceName": coalesce(serviceName, service),
+    "verticalLabel": coalesce(verticalLabel, industry),
+    "dek": coalesce(dek, excerpt),
+    "publisherName": coalesce(publisherName, authorName),
+    publishedAt,
+    reviewedAt,
+    readingMinutes,
+    blogType,
+    contentCategory,
+    "imageUrl": coalesce(coverImage.asset->url, openGraphImage.asset->url, coverImageUrl),
+    "agencyCount": count(entries),
     "href": "/blog/" + slug.current
   }
 `)
