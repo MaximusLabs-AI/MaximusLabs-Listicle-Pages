@@ -182,7 +182,6 @@ function FullProfile({entry, verticalKey, onBack}: {entry: RecordValue; vertical
       <ProfileSection title="Buyer trust"><dl className="definition-list"><dt>Identity and standing</dt><dd>{trust.identity}</dd></dl>{[['Track record', trust.trackRecord], ['Third-party proof', trust.thirdPartyProof], ['How the work gets done', trust.delivery], ['Commercial terms', trust.commercials], ['Risk and recourse', trust.risk]].map(([title, values]) => <div key={String(title)}><h4>{String(title)}</h4><ul className="tick-list">{safeArray(values as string[]).map((item) => <li key={item}>{item}</li>)}</ul></div>)}</ProfileSection>
       <ProfileSection title="Answer engine optimization capability"><ServiceLines lines={safeArray(agency.universalServiceLines)} /><h4>Engine coverage</h4><Engines items={safeArray(agency.engineCoverage)} /><dl className="definition-list"><dt>What gets measured</dt><dd>{agency.measurement}</dd><dt>Tooling and IP</dt><dd>{agency.tooling}</dd><dt>Relationship to SEO</dt><dd>{agency.seoRelationship}</dd></dl></ProfileSection>
       <ProfileSection title={`${verticalKey} practice`}><VerticalPanel agency={agency} verticalKey={verticalKey} /></ProfileSection>
-      <ProfileSection title="Sources"><ol>{safeArray(agency.sources).map((source) => <li key={source._key || source.url}><a href={source.url} target="_blank" rel="nofollow noopener">{source.label}</a></li>)}</ol></ProfileSection>
     </main>
   )
 }
