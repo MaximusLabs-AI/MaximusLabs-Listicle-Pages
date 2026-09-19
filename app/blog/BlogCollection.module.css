@@ -89,10 +89,24 @@
   align-items: start;
 }
 
+/* Sticky, full-viewport-height column so the filter card stays visible and
+   vertically centered on the left while the page scrolls, until the grid row
+   (the results column) ends. */
+.filtersWrap {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100vh;
+}
+
 .filters {
   border-top: 4px solid #1d4ed8;
   background: #fff;
   box-shadow: 0 1px 3px #0000001a;
+  max-height: calc(100vh - 24px);
+  overflow-y: auto;
 }
 
 .filterHeader {
@@ -392,7 +406,8 @@
   .subheading {font-size: 16px}
   .search button {padding: 0 18px}
   .collectionLayout {grid-template-columns: 1fr; gap: 36px}
-  .filters {position: static; max-height: none; overflow: visible}
+  .filtersWrap {position: static; height: auto; display: block}
+  .filters {max-height: none; overflow: visible}
   .filterGroup {display: block; overflow: visible}
   .filterOptions button {width: 100%; white-space: normal}
   .cardGrid {grid-template-columns: 1fr}

@@ -352,7 +352,8 @@ export function BlogCollection({articles}: {articles: BlogCollectionItem[]}) {
       </header>
 
       <div className={styles.collectionLayout}>
-        <aside className={styles.filters} aria-label="Blog filters">
+        <aside className={styles.filtersWrap} aria-label="Blog filters">
+          <div className={styles.filters}>
           <div className={styles.filterHeader}>
             <div>
               <span>Resource library</span>
@@ -417,6 +418,7 @@ export function BlogCollection({articles}: {articles: BlogCollectionItem[]}) {
               </div>
             </details>
           )}
+          </div>
         </aside>
 
         <section className={styles.results} aria-live="polite">
