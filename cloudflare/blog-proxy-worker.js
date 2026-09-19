@@ -1,95 +1,44 @@
 /**
  * MaximusLabs blog reverse-proxy (Cloudflare Worker)
  * -------------------------------------------------------------------------
- * Serves the Vercel-hosted Next.js blog under the primary domain, replacing the
- * old Webflow blog pages:
+ * Serves the Vercel-hosted Next.js blog as a SUBDIRECTORY of the main site:
  *
- *     www.maximuslabs.ai/blog            -> collection
+ *     www.maximuslabs.ai/blog            -> collection + landing page
  *     www.maximuslabs.ai/blog/<slug>     -> listicle or informational article
  *     www.maximuslabs.ai/blog/sitemap.xml
  *
- * The Vercel origin is path-preserving (collection at /blog, entries at
- * /blog/<slug>) and sends `X-Robots-Tag: noindex`; this worker strips that so
- * only the public maximuslabs.ai/blog URLs get indexed.
+ * The navbar "Blog" link on Webflow points to /blog; this worker serves that
+ * path (and the app's assets) from the Vercel origin. Everything else on the
+ * domain stays on Webflow. The origin is noindex; the worker strips that so the
+ * public /blog URLs index on the primary domain.
  *
- * ATTACH TO THESE ROUTES (Worker > Settings > Domains & Routes), on the zone:
- *     www.maximuslabs.ai/blog
- *     www.maximuslabs.ai/blog/*
- *     www.maximuslabs.ai/_next/*        (Next.js JS/CSS/image assets)
- *     www.maximuslabs.ai/icon.svg
- *     www.maximuslabs.ai/apple-icon
- * Everything else on the zone keeps hitting Webflow untouched.
+ * Attach on routes: /blog, /blog/*, /_next/*, /icon.svg, /apple-icon
  */
 
-// The Vercel deployment host. MUST be a domain configured on that Vercel project
-// (the *.vercel.app production URL, or a custom subdomain like
-// blog-origin.maximuslabs.ai). It stays noindex — this app already sends that.
+// Must be a host configured on the Vercel project (the *.vercel.app URL or a
+// custom subdomain). Not forwarding the client Host keeps requests routed here.
 const ORIGIN = 'maximus-labs-listicle-pages.vercel.app'
-
-const TAG = 'maximus-blog-proxy-v1'
-
-function owns(path) {
-  return (
-    path === '/blog' ||
-    path.startsWith('/blog/') ||
-    path.startsWith('/_next/') ||
-    path === '/icon.svg' ||
-    path === '/apple-icon'
-  )
-}
 
 export default {
   async fetch(request) {
     const url = new URL(request.url)
+    const p = url.pathname
 
-    // Not one of ours -> let Cloudflare serve it from Webflow (the zone origin).
-    if (!owns(url.pathname)) return fetch(request)
-
-    // Build the origin URL. Path-preserving, except the sitemap, which Next
-    // serves at the origin root.
-    const target = new URL(url)
-    target.protocol = 'https:'
-    target.hostname = ORIGIN
-    target.port = ''
-    if (url.pathname === '/blog/sitemap.xml') target.pathname = '/sitemap.xml'
-
-    // Forward the client's headers, but drop `host` so the request is routed to
-    // (and identified as) the origin; tell the origin the real public host.
-    const fwd = new Headers(request.headers)
-    fwd.delete('host')
-    fwd.set('x-forwarded-host', url.host)
-    fwd.set('x-forwarded-proto', 'https')
-
-    const init = {
-      method: request.method,
-      headers: fwd,
-      redirect: 'manual', // pass origin redirects through to the browser
-      body: request.method === 'GET' || request.method === 'HEAD' ? undefined : request.body,
+    // Only the blog and its assets are proxied; everything else is Webflow.
+    if (!(p === '/blog' || p.startsWith('/blog/') || p.startsWith('/_next/') || p === '/icon.svg' || p === '/apple-icon')) {
+      return fetch(request)
     }
 
-    // Fallback: never 500 the whole page if the origin hiccups.
-    let res
-    try {
-      res = await fetch(target, init)
-    } catch {
-      return new Response('The blog is briefly unavailable. Please refresh in a moment.', {
-        status: 502,
-        headers: {'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store', 'x-served-by': TAG},
-      })
-    }
+    // Path-preserving, except the sitemap (Next serves it at the origin root).
+    const path = p === '/blog/sitemap.xml' ? '/sitemap.xml' : p
+
+    const res = await fetch(`https://${ORIGIN}${path}${url.search}`, {
+      headers: {'X-Forwarded-Host': url.host},
+    })
 
     const headers = new Headers(res.headers)
-    headers.delete('x-robots-tag') // origin is noindex; the public URL should index
-    headers.set('x-served-by', TAG)
-
-    // If the origin ever returns an absolute redirect to itself, rewrite it back
-    // to the public host so we never leak the origin domain.
-    const loc = headers.get('location')
-    if (loc) headers.set('location', loc.replaceAll(`https://${ORIGIN}`, `https://${url.host}`))
-
-    // Body streams straight through (no buffering); cacheable responses are
-    // edge-cached by Cloudflare using the origin's Cache-Control (Next ISR +
-    // immutable static assets), so repeat hits are fast.
-    return new Response(res.body, {status: res.status, statusText: res.statusText, headers})
+    headers.delete('x-robots-tag') // origin is noindex; the public /blog URL indexes
+    headers.set('x-served-by', 'maximus-blog-proxy')
+    return new Response(res.body, {status: res.status, headers})
   },
 }
