@@ -2,15 +2,15 @@
   width: 100%;
   max-width: 1520px;
   margin: 0 auto;
-  padding: 48px 28px 8px;
+  padding: 28px 28px 8px;
 }
 
 .heading {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   flex-direction: column;
-  margin-bottom: 64px;
-  text-align: center;
+  margin-bottom: 32px;
+  text-align: left;
 }
 
 .heading h1 {
@@ -30,7 +30,7 @@
 
 .subheading {
   max-width: 60ch;
-  margin: 18px auto 28px;
+  margin: 12px 0 20px;
   color: #5a5c76;
   font-size: clamp(16px, 1rem + .2vw, 18px);
   font-weight: 400;
@@ -89,33 +89,28 @@
   align-items: start;
 }
 
-/* Sticky, full-viewport-height column so the filter card stays visible and
-   vertically centered on the left while the page scrolls, until the grid row
-   (the results column) ends. */
+/* Sticky column pinned near the top so the whole filter is visible in the first
+   fold on landing and stays visible on the left as the page scrolls, until the
+   grid row (the results column) ends. */
 .filtersWrap {
   position: sticky;
-  top: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  height: 100vh;
+  top: 24px;
 }
 
 .filters {
   border-top: 4px solid #1d4ed8;
   background: #fff;
   box-shadow: 0 1px 3px #0000001a;
-  max-height: calc(100vh - 24px);
+  max-height: calc(100vh - 48px);
   overflow-y: auto;
 }
 
 .filterHeader {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 8px;
-  padding: 22px 20px;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 20px 20px;
   border-bottom: 1px solid #e2e8f0;
 }
 
@@ -147,7 +142,7 @@
 .filterGroup:last-child {border-bottom: 0}
 .filterGroup summary {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   gap: 8px;
   padding: 16px 20px;
@@ -181,7 +176,7 @@
   border-radius: 6px;
   background: transparent;
   color: #475569;
-  text-align: center;
+  text-align: left;
   font: 500 13px/1.35 var(--sans);
   cursor: pointer;
 }
