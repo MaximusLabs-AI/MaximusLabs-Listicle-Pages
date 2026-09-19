@@ -25,8 +25,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({revalidated: false, message: 'Missing document type'}, {status: 400})
     }
 
-    revalidatePath('/', 'page')
+    revalidatePath('/blog', 'page')
     revalidatePath('/blog/[slug]', 'page')
+    revalidatePath('/sitemap.xml')
     if ((body._type === 'listiclePage' || body._type === 'infoArticle') && body.slug) {
       revalidatePath(`/blog/${body.slug}`)
     }

@@ -4,9 +4,11 @@ import {notFound} from 'next/navigation'
 import {sanityClient} from '@/sanity/lib/client'
 import {infoArticleQuery, listiclePageQuery} from '@/sanity/lib/queries'
 import {AboutAuthor} from '@/app/components/AboutAuthor'
+import {JsonLd} from '@/app/components/JsonLd'
 import {RelatedPosts} from '@/app/components/RelatedPosts'
 import {SiteFooter} from '@/app/components/SiteFooter'
 import {SiteHeader} from '@/app/components/SiteHeader'
+import {articleJsonLd, blogUrl, listicleJsonLd} from '@/app/lib/seo'
 import {ListicleTemplate} from '@/app/listicles/[slug]/ListicleTemplate'
 
 import {InfoArticleTemplate, type InfoArticleDocument} from './InfoArticleTemplate'
@@ -37,12 +39,17 @@ export async function generateMetadata({params}: Props): Promise<Metadata> {
   const entry = await resolveEntry(slug)
   if (!entry) return {}
 
+  // Canonical always points to the public /blog/<slug> URL (not the legacy
+  // Webflow sourceUrl, which was telling Google the page lived elsewhere).
+  const canonical = blogUrl(slug)
+
   if (entry.kind === 'listicle') {
     const page = entry.page as Record<string, string | undefined>
     return {
       title: page.seoTitle || page.title,
       description: page.metaDescription || page.dek,
-      alternates: page.canonicalUrl ? {canonical: page.canonicalUrl} : undefined,
+      alternates: {canonical},
+      openGraph: {type: 'article', url: canonical, title: page.seoTitle || page.title, description: page.metaDescription || page.dek},
     }
   }
 
@@ -50,8 +57,14 @@ export async function generateMetadata({params}: Props): Promise<Metadata> {
   return {
     title: article.seoTitle || article.title,
     description: article.metaDescription || article.excerpt,
-    alternates: article.sourceUrl ? {canonical: article.sourceUrl} : undefined,
-    openGraph: article.imageUrl ? {images: [article.imageUrl]} : undefined,
+    alternates: {canonical},
+    openGraph: {
+      type: 'article',
+      url: canonical,
+      title: article.seoTitle || article.title,
+      description: article.metaDescription || article.excerpt,
+      images: article.imageUrl ? [article.imageUrl] : undefined,
+    },
   }
 }
 
@@ -67,6 +80,7 @@ export default async function BlogEntryPage({params}: Props) {
   if (entry.kind === 'listicle') {
     return (
       <>
+        <JsonLd data={listicleJsonLd({...(entry.page as Record<string, unknown>), slug} as Parameters<typeof listicleJsonLd>[0])} />
         <SiteHeader />
         <ListicleTemplate page={entry.page} />
         <AboutAuthor />
@@ -78,6 +92,7 @@ export default async function BlogEntryPage({params}: Props) {
 
   return (
     <>
+      <JsonLd data={articleJsonLd({...entry.article, slug})} />
       <SiteHeader />
       <InfoArticleTemplate article={entry.article} />
       <RelatedPosts slug={slug} />
