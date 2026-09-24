@@ -80,9 +80,19 @@ function getCoverVariant(article: BlogCollectionItem) {
   return (Array.from(article.slug).reduce((total, character) => total + character.charCodeAt(0), 0) % 4) + 1
 }
 
+// Accept either a plain YYYY-MM-DD (append midnight UTC) or a full ISO datetime,
+// and never throw on a malformed value — a single bad CMS date must not crash the
+// whole /blog prerender.
+function parseDate(value?: string): Date | null {
+  if (!value) return null
+  const date = new Date(/^\d{4}-\d{2}-\d{2}$/.test(value) ? `${value}T00:00:00Z` : value)
+  return Number.isNaN(date.getTime()) ? null : date
+}
+
 function formatDate(value?: string) {
-  if (!value) return 'Recently updated'
-  return new Intl.DateTimeFormat('en-US', {month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC'}).format(new Date(`${value}T00:00:00Z`))
+  const date = parseDate(value)
+  if (!date) return 'Recently updated'
+  return new Intl.DateTimeFormat('en-US', {month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC'}).format(date)
 }
 
 function readingTime(article: BlogCollectionItem) {
@@ -136,8 +146,8 @@ const servicePriority: Record<string, number> = {'AEO': 60, 'GEO & AI SEO': 50, 
 function priorityScore(article: BlogCollectionItem): number {
   let score = isListicle(article) ? 1000 : 0
   score += servicePriority[getService(article)] ?? 10
-  const date = article.publishedAt || article.reviewedAt
-  if (date) score += new Date(`${date}T00:00:00Z`).getTime() / 1e13
+  const date = parseDate(article.publishedAt || article.reviewedAt)
+  if (date) score += date.getTime() / 1e13
   return score
 }
 

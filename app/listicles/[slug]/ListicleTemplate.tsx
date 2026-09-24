@@ -13,7 +13,9 @@ function safeArray<T = any>(value: T[] | null | undefined): T[] {
 
 function longDate(value?: string) {
   if (!value) return 'Not set'
-  return new Intl.DateTimeFormat('en', {month: 'long', year: 'numeric'}).format(new Date(`${value}T00:00:00`))
+  const date = new Date(/^\d{4}-\d{2}-\d{2}$/.test(value) ? `${value}T00:00:00` : value)
+  if (Number.isNaN(date.getTime())) return 'Not set'
+  return new Intl.DateTimeFormat('en', {month: 'long', year: 'numeric'}).format(date)
 }
 
 function getVertical(agency: RecordValue, key: string) {
