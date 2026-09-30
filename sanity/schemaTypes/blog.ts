@@ -1,5 +1,7 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
 
+import {checkOldAddress} from '../lib/validateOldAddress'
+
 const serviceOptions = [
   {title: 'AEO', value: 'aeo'},
   {title: 'GEO & AI SEO', value: 'geo'},
@@ -111,6 +113,16 @@ function sharedFields() {
     defineField({name: 'searchKeywords', title: 'Search keywords', type: 'array', of: [{type: 'string'}], group: 'discovery'}),
     defineField({name: 'seoTitle', title: 'SEO title', type: 'string', group: 'seo'}),
     defineField({name: 'metaDescription', title: 'Meta description', type: 'text', rows: 3, group: 'seo'}),
+    defineField({
+      name: 'replacesUrl',
+      title: 'Replaces old page',
+      description: "Leave empty to publish on /blog. If this article covers the same topic as an existing old page, paste that page's address: it will show this article in the new design.",
+      type: 'url',
+      group: 'seo',
+      // Migrated articles keep their original page on Webflow.
+      hidden: ({document}) => Boolean(document?.sourceUrl),
+      validation: (rule) => rule.custom(checkOldAddress({mustBeOld: true})),
+    }),
     defineField({name: 'sourceTitle', title: 'Original source title', type: 'string', group: 'migration', readOnly: true}),
     defineField({name: 'sourceUrl', title: 'Original published URL', type: 'url', group: 'migration', readOnly: true}),
     defineField({name: 'sourcePath', title: 'Original URL path', type: 'string', group: 'migration', readOnly: true}),

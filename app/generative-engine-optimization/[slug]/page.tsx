@@ -1,6 +1,6 @@
-import {legacyListicleRoute} from '@/app/lib/legacyListicleRoute'
+import {legacyPageRoute} from '@/app/lib/legacyPageRoute'
 
-const route = legacyListicleRoute('generative-engine-optimization')
+const route = legacyPageRoute('generative-engine-optimization')
 
 export const generateMetadata = route.generateMetadata
-export default route.LegacyListiclePage
+export default route.LegacyPage

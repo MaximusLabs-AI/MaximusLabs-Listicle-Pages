@@ -3,14 +3,11 @@ import {notFound, permanentRedirect} from 'next/navigation'
 
 import {sanityClient} from '@/sanity/lib/client'
 import {infoArticleQuery, listiclePageQuery} from '@/sanity/lib/queries'
-import {JsonLd} from '@/app/components/JsonLd'
+import {ArticleView, articleMetadata} from '@/app/components/ArticleView'
 import {ListicleView, listicleMetadata} from '@/app/components/ListicleView'
-import {RelatedPosts} from '@/app/components/RelatedPosts'
-import {SiteFooter} from '@/app/components/SiteFooter'
-import {SiteHeader} from '@/app/components/SiteHeader'
-import {articleJsonLd, blogUrl} from '@/app/lib/seo'
+import {blogUrl} from '@/app/lib/seo'
 
-import {InfoArticleTemplate, type InfoArticleDocument} from './InfoArticleTemplate'
+import type {InfoArticleDocument} from './InfoArticleTemplate'
 
 type Props = {params: Promise<{slug: string}>}
 
@@ -37,26 +34,8 @@ export async function generateMetadata({params}: Props): Promise<Metadata> {
   const {slug} = await params
   const entry = await resolveEntry(slug)
   if (!entry) return {}
-
-  // Canonical always points to the public /blog/<slug> URL (not the legacy
-  // Webflow sourceUrl, which was telling Google the page lived elsewhere).
-  const canonical = blogUrl(slug)
-
-  if (entry.kind === 'listicle') return listicleMetadata(entry.page, canonical)
-
-  const article = entry.article
-  return {
-    title: article.seoTitle || article.title,
-    description: article.metaDescription || article.excerpt,
-    alternates: {canonical},
-    openGraph: {
-      type: 'article',
-      url: canonical,
-      title: article.seoTitle || article.title,
-      description: article.metaDescription || article.excerpt,
-      images: article.imageUrl ? [article.imageUrl] : undefined,
-    },
-  }
+  const url = blogUrl(slug)
+  return entry.kind === 'listicle' ? listicleMetadata(entry.page, url) : articleMetadata(entry.article, url)
 }
 
 export default async function BlogEntryPage({params}: Props) {
@@ -64,25 +43,16 @@ export default async function BlogEntryPage({params}: Props) {
   const entry = await resolveEntry(slug)
   if (!entry) notFound()
 
-  // A migrated article, or a listicle published at an old-folder URL, lives at
-  // that URL; next.config.ts sends the 301. This covers a mapping added after the
-  // last deploy, so the /blog copy is never served.
-  const legacyUrl = (entry.kind === 'article' ? entry.article : entry.page) as {legacyUrl?: string}
-  if (legacyUrl.legacyUrl) permanentRedirect(legacyUrl.legacyUrl)
+  // A page that lives at an old-folder URL (see sanity/lib/legacyRules.ts): the
+  // worker and next.config.ts send the 301. This covers anything they have not
+  // picked up yet, so the /blog copy is never served.
+  const {legacyUrl} = (entry.kind === 'article' ? entry.article : entry.page) as {legacyUrl?: string}
+  if (legacyUrl) permanentRedirect(legacyUrl)
 
-  // Both types share the global chrome + Related Posts. Informational articles
-  // carry the sticky author/booking card as a right column inside the template;
-  // listicles keep their full-width content and get the About-the-Author section
-  // at the bottom instead (the right card was cramping the comparison tables).
-  if (entry.kind === 'listicle') return <ListicleView page={entry.page} slug={slug} url={blogUrl(slug)} />
-
-  return (
-    <>
-      <JsonLd data={articleJsonLd({...entry.article, slug})} />
-      <SiteHeader />
-      <InfoArticleTemplate article={entry.article} />
-      <RelatedPosts slug={slug} />
-      <SiteFooter />
-    </>
-  )
+  // Informational articles carry the sticky author/booking card as a right column
+  // inside the template; listicles keep their full-width content and get the
+  // About-the-Author section at the bottom (the right card cramped the tables).
+  return entry.kind === 'listicle'
+    ? <ListicleView page={entry.page} slug={slug} url={blogUrl(slug)} />
+    : <ArticleView article={entry.article} url={blogUrl(slug)} />
 }

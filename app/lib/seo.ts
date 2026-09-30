@@ -41,6 +41,7 @@ const clean = <T,>(value: T): T => JSON.parse(JSON.stringify(value))
 
 type ArticleInput = {
   slug: string
+  url?: string // the public URL when it is not /blog/<slug>
   title: string
   excerpt?: string
   imageUrl?: string | null
@@ -49,7 +50,7 @@ type ArticleInput = {
 }
 
 export function articleJsonLd(a: ArticleInput) {
-  const url = blogUrl(a.slug)
+  const url = a.url || blogUrl(a.slug)
   return clean({
     '@context': 'https://schema.org',
     '@graph': [
