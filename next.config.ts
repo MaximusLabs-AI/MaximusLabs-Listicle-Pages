@@ -1,11 +1,15 @@
 import {createClient} from '@sanity/client'
 import type {NextConfig} from 'next'
 
-// /blog/<slug> -> the article's original Webflow URL, as true 301s. Same filter
-// as `legacyUrl` in sanity/lib/queries.ts. Read at build time, so a newly added
-// legacy article takes effect on the next deploy; until then the article page
-// itself redirects (app/blog/[slug]/page.tsx), so nothing is ever served twice.
-async function legacyArticleRedirects() {
+// /blog/<slug> -> the page's old-folder URL, as true 301s: migrated articles (their
+// sourceUrl) and listicles published there (their canonicalUrl). Same rule as
+// `legacyUrl` in sanity/lib/queries.ts. Read at build time, so a new mapping takes
+// effect on the next deploy; until then the /blog page itself redirects
+// (app/blog/[slug]/page.tsx), so nothing is ever served twice.
+const inLegacyFolder = (field: string) =>
+  `(string::startsWith(${field}, "https://www.maximuslabs.ai/answer-engine-optimizations/") || string::startsWith(${field}, "https://www.maximuslabs.ai/generative-engine-optimization/"))`
+
+async function legacyRedirects() {
   try {
     const client = createClient({
       projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || process.env.SANITY_PROJECT_ID || 'zhc68b02',
@@ -16,11 +20,14 @@ async function legacyArticleRedirects() {
       perspective: 'published',
     })
     const rows = await client.fetch<{slug: string; url: string}[]>(
-      `*[_type == "infoArticle" && defined(slug.current) && defined(sourceUrl) && !string::startsWith(sourceUrl, "https://www.maximuslabs.ai/blog/")]{"slug": slug.current, "url": sourceUrl}`,
+      `*[defined(slug.current) && (
+        (_type == "infoArticle" && defined(sourceUrl) && ${inLegacyFolder('sourceUrl')}) ||
+        (_type == "listiclePage" && defined(canonicalUrl) && ${inLegacyFolder('canonicalUrl')})
+      )]{"slug": slug.current, "url": select(_type == "infoArticle" => sourceUrl, canonicalUrl)}`,
     )
     return rows.map((r) => ({source: `/blog/${r.slug}`, destination: r.url, statusCode: 301 as const}))
   } catch (error) {
-    console.warn('Could not load legacy article redirects from Sanity; the page-level redirect still applies.', error)
+    console.warn('Could not load legacy redirects from Sanity; the page-level redirect still applies.', error)
     return []
   }
 }
@@ -31,7 +38,7 @@ const nextConfig: NextConfig = {
     return [
       // Listicles moved under the unified /blog path.
       {source: '/listicles/:slug', destination: '/blog/:slug', permanent: true},
-      ...(await legacyArticleRedirects()),
+      ...(await legacyRedirects()),
     ]
   },
   // The Vercel origin must never be indexed directly — only the public

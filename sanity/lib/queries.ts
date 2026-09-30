@@ -1,12 +1,18 @@
 import {defineQuery} from 'next-sanity'
 
-// Informational articles migrated from Webflow keep their original URL
-// (/answer-engine-optimizations/*, /generative-engine-optimization/*) as the
-// canonical one, because that URL carries the ranking history. Their /blog copy
-// 301s there and every card links straight to it. Listicles have no older URL,
-// and an article whose sourceUrl is already /blog stays on /blog.
-// next.config.ts repeats this filter to build the 301 list; keep them in step.
-const legacyUrl = `select(_type == "infoArticle" && defined(sourceUrl) && !string::startsWith(sourceUrl, "https://www.maximuslabs.ai/blog/") => sourceUrl)`
+// Pages that live at a URL in one of the original Webflow folders instead of
+// /blog, because that URL carries the ranking history:
+// - informational articles migrated from Webflow (their original sourceUrl),
+// - listicles published at an old-folder URL (their canonicalUrl).
+// Their /blog address 301s there, and every card links straight to it. The two
+// folders are listed explicitly so a stray URL can never create a redirect loop.
+// next.config.ts repeats this rule to build the 301 list; keep them in step.
+const inLegacyFolder = (field: string) =>
+  `(string::startsWith(${field}, "https://www.maximuslabs.ai/answer-engine-optimizations/") || string::startsWith(${field}, "https://www.maximuslabs.ai/generative-engine-optimization/"))`
+const legacyUrl = `select(
+  _type == "infoArticle" && defined(sourceUrl) && ${inLegacyFolder('sourceUrl')} => sourceUrl,
+  _type == "listiclePage" && defined(canonicalUrl) && ${inLegacyFolder('canonicalUrl')} => canonicalUrl
+)`
 
 export const listicleIndexQuery = defineQuery(`
   *[_type == "listiclePage"] | order(publishedAt desc) {
@@ -48,10 +54,12 @@ export const infoArticleQuery = defineQuery(`
     "imageUrl": coalesce(coverImage.asset->url, coverImageUrl)
   }
 `)
-export const listiclePageQuery = defineQuery(`
-  *[_type == "listiclePage" && slug.current == $slug][0] {
+
+// Everything the listicle template needs, including resolved agencies.
+const listicleProjection = `{
     ...,
     "slug": slug.current,
+    "legacyUrl": ${legacyUrl},
     "template": *[_id == "listicleTemplate.default"][0]{
       name,
       publisherName,
@@ -81,5 +89,13 @@ export const listiclePageQuery = defineQuery(`
       ...,
       agency->{_id, playerId, name, home}
     }
-  }
+  }`
+
+export const listiclePageQuery = defineQuery(`
+  *[_type == "listiclePage" && slug.current == $slug][0] ${listicleProjection}
+`)
+
+// A listicle published at an old-folder URL, looked up by that URL.
+export const listicleByUrlQuery = defineQuery(`
+  *[_type == "listiclePage" && canonicalUrl == $url][0] ${listicleProjection}
 `)
