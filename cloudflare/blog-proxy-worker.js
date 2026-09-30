@@ -32,8 +32,12 @@ export default {
     // Path-preserving, except the sitemap (Next serves it at the origin root).
     const path = p === '/blog/sitemap.xml' ? '/sitemap.xml' : p
 
+    // redirect: 'manual' passes the app's redirects (e.g. /blog/<article> 301 ->
+    // its original URL) to the browser. The default ('follow') would fetch the
+    // target itself and serve it at the /blog URL with a 200.
     const res = await fetch(`https://${ORIGIN}${path}${url.search}`, {
       headers: {'X-Forwarded-Host': url.host},
+      redirect: 'manual',
     })
 
     const headers = new Headers(res.headers)

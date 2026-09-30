@@ -1,5 +1,5 @@
 import type {Metadata} from 'next'
-import {notFound} from 'next/navigation'
+import {notFound, permanentRedirect} from 'next/navigation'
 
 import {sanityClient} from '@/sanity/lib/client'
 import {infoArticleQuery, listiclePageQuery} from '@/sanity/lib/queries'
@@ -72,6 +72,11 @@ export default async function BlogEntryPage({params}: Props) {
   const {slug} = await params
   const entry = await resolveEntry(slug)
   if (!entry) notFound()
+
+  // A migrated article lives at its original URL; next.config.ts sends the 301.
+  // This covers a mapping added after the last deploy, so the /blog copy is never served.
+  const legacyUrl = entry.kind === 'article' ? (entry.article as {legacyUrl?: string}).legacyUrl : undefined
+  if (legacyUrl) permanentRedirect(legacyUrl)
 
   // Both types share the global chrome + Related Posts. Informational articles
   // carry the sticky author/booking card as a right column inside the template;

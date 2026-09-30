@@ -155,9 +155,13 @@ export function ArticleCard({article, keyword}: {article: BlogCollectionItem; ke
   // The collection passes a de-duplicated keyword; standalone callers (e.g.
   // RelatedPosts) omit it and the card derives one client-side.
   const coverText = keyword ?? getCoverKeyword(article)
+  const href = article.href || `/blog/${article.slug}`
+  // Migrated articles link to their original Webflow URL. That page is not part
+  // of this app, so use a plain link: next/link would try to route and prefetch it.
+  const CardLink = href.startsWith('http') ? 'a' : Link
   return (
     <article className={styles.card}>
-      <Link className={styles.cardLink} href={article.href || `/blog/${article.slug}`}>
+      <CardLink className={styles.cardLink} href={href}>
         <div className={styles.cardImage}>
           <div className={`${styles.imageFallback} ${styles[`coverVariant${getCoverVariant(article)}`]}`} aria-hidden="true">
             <i className={styles.coverGrid} />
@@ -179,7 +183,7 @@ export function ArticleCard({article, keyword}: {article: BlogCollectionItem; ke
             <small>{formatDate(article.publishedAt || article.reviewedAt)} · {readingTime(article)} min read</small>
           </span>
         </div>
-      </Link>
+      </CardLink>
     </article>
   )
 }
