@@ -7,11 +7,12 @@
  *     www.maximuslabs.ai/blog/<slug>     -> listicle, or a 301 to the page's old URL
  *     www.maximuslabs.ai/blog/sitemap.xml
  *
- * It also serves a listicle whose Canonical URL in Sanity is an old Webflow-folder
- * address (/answer-engine-optimizations/<x>, /generative-engine-optimization/<x>).
- * Which addresses those are comes from the app's routing list, read live from
- * Sanity, so publishing in Sanity is enough. Every other page in those folders,
- * including the migrated articles, stays on Webflow.
+ * It also serves a page created in Sanity at an old Webflow-folder address
+ * (/answer-engine-optimizations/<x>, /generative-engine-optimization/<x>): a
+ * listicle whose Canonical URL is that address, or an article whose "Replaces old
+ * page" is. Which addresses those are comes from the app's routing list, read live
+ * from Sanity, so publishing in Sanity is enough. Every other page in those
+ * folders, including the migrated articles, stays on Webflow.
  *
  * Everything else on the domain stays on Webflow. The origin is noindex; the
  * worker strips that so the public URLs index on the primary domain.

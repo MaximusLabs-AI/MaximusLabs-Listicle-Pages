@@ -1,14 +1,12 @@
 import {createClient} from '@sanity/client'
 import type {NextConfig} from 'next'
 
-// /blog/<slug> -> the page's old-folder URL, as true 301s: migrated articles (their
-// sourceUrl) and listicles published there (their canonicalUrl). Same rule as
-// `legacyUrl` in sanity/lib/queries.ts. Read at build time, so a new mapping takes
-// effect on the next deploy; until then the /blog page itself redirects
-// (app/blog/[slug]/page.tsx), so nothing is ever served twice.
-const inLegacyFolder = (field: string) =>
-  `(string::startsWith(${field}, "https://www.maximuslabs.ai/answer-engine-optimizations/") || string::startsWith(${field}, "https://www.maximuslabs.ai/generative-engine-optimization/"))`
+import {legacyUrlGroq} from './sanity/lib/legacyRules'
 
+// /blog/<slug> -> the page's old-folder URL, as true 301s (rule in
+// sanity/lib/legacyRules.ts). A backup: the Cloudflare worker sends these 301s
+// live from Sanity. Read at build time; anything newer is caught by the /blog
+// page itself (app/blog/[slug]/page.tsx), so nothing is ever served twice.
 async function legacyRedirects() {
   try {
     const client = createClient({
@@ -20,10 +18,7 @@ async function legacyRedirects() {
       perspective: 'published',
     })
     const rows = await client.fetch<{slug: string; url: string}[]>(
-      `*[defined(slug.current) && (
-        (_type == "infoArticle" && defined(sourceUrl) && ${inLegacyFolder('sourceUrl')}) ||
-        (_type == "listiclePage" && defined(canonicalUrl) && ${inLegacyFolder('canonicalUrl')})
-      )]{"slug": slug.current, "url": select(_type == "infoArticle" => sourceUrl, canonicalUrl)}`,
+      `*[_type in ["infoArticle", "listiclePage"] && defined(slug.current)]{"slug": slug.current, "url": ${legacyUrlGroq}}[defined(url)]`,
     )
     return rows.map((r) => ({source: `/blog/${r.slug}`, destination: r.url, statusCode: 301 as const}))
   } catch (error) {

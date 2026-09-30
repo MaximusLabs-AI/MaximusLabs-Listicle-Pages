@@ -1,6 +1,23 @@
 import type {DocumentActionComponent} from 'sanity'
 
+import {isLegacyUrl, SITE} from '../lib/legacyRules'
+
 type SlugValue = {current?: string}
+
+// Where a document is published on the live site (see sanity/lib/legacyRules.ts):
+// its old-folder address when it has one, otherwise its /blog address.
+function publicUrl(type: string, doc: Record<string, unknown>, slug: string): string {
+  if (type === 'listiclePage' && isLegacyUrl(doc.canonicalUrl)) return doc.canonicalUrl
+  if (type === 'infoArticle') {
+    // A migrated article's live page is its original Webflow page.
+    if (doc.sourceUrl) {
+      if (isLegacyUrl(doc.sourceUrl)) return doc.sourceUrl
+    } else if (isLegacyUrl(doc.replacesUrl)) {
+      return doc.replacesUrl
+    }
+  }
+  return `${SITE}/blog/${encodeURIComponent(slug)}`
+}
 
 export const VisitSiteAction: DocumentActionComponent = (props) => {
   if (!['listiclePage', 'infoArticle'].includes(props.type)) return null
@@ -13,9 +30,8 @@ export const VisitSiteAction: DocumentActionComponent = (props) => {
     group: ['paneActions'],
     disabled: !slug,
     onHandle: () => {
-      if (!slug) return
-      const pageUrl = new URL(`/blog/${encodeURIComponent(slug)}`, window.location.origin)
-      window.open(pageUrl.toString(), '_blank', 'noopener,noreferrer')
+      if (!slug || !document) return
+      window.open(publicUrl(props.type, document, slug), '_blank', 'noopener,noreferrer')
     },
   }
 }

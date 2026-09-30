@@ -1,5 +1,7 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
 
+import {checkOldAddress} from '../lib/validateOldAddress'
+
 export const listiclePage = defineType({
   name: 'listiclePage',
   title: 'Listicle page',
@@ -42,7 +44,14 @@ export const listiclePage = defineType({
 
     defineField({name: 'seoTitle', title: 'SEO title', type: 'string', group: 'seo', validation: (rule) => rule.required()}),
     defineField({name: 'metaDescription', title: 'Meta description', type: 'text', rows: 3, group: 'seo', validation: (rule) => rule.required()}),
-    defineField({name: 'canonicalUrl', title: 'Canonical URL', type: 'url', group: 'seo', validation: (rule) => rule.required()}),
+    defineField({
+      name: 'canonicalUrl',
+      title: 'Canonical URL',
+      description: "For a new topic, use this listicle's /blog address. If it covers the same topic as an existing old page, paste that page's address: it will show this listicle in the new design.",
+      type: 'url',
+      group: 'seo',
+      validation: (rule) => rule.required().custom(checkOldAddress({mustBeOld: false})),
+    }),
     defineField({name: 'openGraphImage', title: 'Open Graph image', type: 'image', group: 'seo', options: {hotspot: true}}),
     defineField({name: 'footerReviewNote', title: 'Review-data footer note', type: 'text', rows: 3, group: 'page'}),
     defineField({name: 'footerLinkNote', title: 'Outbound-link footer note', type: 'text', rows: 2, group: 'page'}),

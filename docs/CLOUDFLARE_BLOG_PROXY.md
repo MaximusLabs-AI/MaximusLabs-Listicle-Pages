@@ -53,9 +53,9 @@ maximuslabs.ai/blog/*      ->      Cloudflare Worker (thin reverse proxy)
    - `www.maximuslabs.ai/answer-engine-optimizations/*`
    - `www.maximuslabs.ai/generative-engine-optimization/*`
 
-   The two folder routes let a listicle take over an old Webflow address with
-   no Cloudflare change: set its Canonical URL in Sanity to that address and
-   publish. The worker reads the app's routing list (`/api/legacy-routes`,
+   The two folder routes let a page created in Sanity take over an old Webflow
+   address with no Cloudflare change: set a listicle's Canonical URL, or an
+   article's "Replaces old page", to that address and publish. The worker reads the app's routing list (`/api/legacy-routes`,
    cached 60 seconds) and serves only the addresses on it from the app; every
    other page in those folders, including the migrated articles, stays on
    Webflow. If the list cannot be read, the whole folder stays on Webflow.
