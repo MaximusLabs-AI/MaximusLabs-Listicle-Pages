@@ -74,6 +74,7 @@ export function articleJsonLd(a: ArticleInput) {
 
 type ListicleInput = {
   slug: string
+  url?: string // the public URL when it is not /blog/<slug>
   title: string
   dek?: string
   publishedAt?: string
@@ -83,7 +84,7 @@ type ListicleInput = {
 }
 
 export function listicleJsonLd(p: ListicleInput) {
-  const url = blogUrl(p.slug)
+  const url = p.url || blogUrl(p.slug)
   const entries = Array.isArray(p.entries) ? p.entries : []
   const questions = Array.isArray(p.questions) ? p.questions : []
 

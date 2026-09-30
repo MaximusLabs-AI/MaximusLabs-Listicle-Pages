@@ -3,13 +3,12 @@ import {notFound, permanentRedirect} from 'next/navigation'
 
 import {sanityClient} from '@/sanity/lib/client'
 import {infoArticleQuery, listiclePageQuery} from '@/sanity/lib/queries'
-import {AboutAuthor} from '@/app/components/AboutAuthor'
 import {JsonLd} from '@/app/components/JsonLd'
+import {ListicleView, listicleMetadata} from '@/app/components/ListicleView'
 import {RelatedPosts} from '@/app/components/RelatedPosts'
 import {SiteFooter} from '@/app/components/SiteFooter'
 import {SiteHeader} from '@/app/components/SiteHeader'
-import {articleJsonLd, blogUrl, listicleJsonLd} from '@/app/lib/seo'
-import {ListicleTemplate} from '@/app/listicles/[slug]/ListicleTemplate'
+import {articleJsonLd, blogUrl} from '@/app/lib/seo'
 
 import {InfoArticleTemplate, type InfoArticleDocument} from './InfoArticleTemplate'
 
@@ -43,15 +42,7 @@ export async function generateMetadata({params}: Props): Promise<Metadata> {
   // Webflow sourceUrl, which was telling Google the page lived elsewhere).
   const canonical = blogUrl(slug)
 
-  if (entry.kind === 'listicle') {
-    const page = entry.page as Record<string, string | undefined>
-    return {
-      title: page.seoTitle || page.title,
-      description: page.metaDescription || page.dek,
-      alternates: {canonical},
-      openGraph: {type: 'article', url: canonical, title: page.seoTitle || page.title, description: page.metaDescription || page.dek},
-    }
-  }
+  if (entry.kind === 'listicle') return listicleMetadata(entry.page, canonical)
 
   const article = entry.article
   return {
@@ -73,27 +64,17 @@ export default async function BlogEntryPage({params}: Props) {
   const entry = await resolveEntry(slug)
   if (!entry) notFound()
 
-  // A migrated article lives at its original URL; next.config.ts sends the 301.
-  // This covers a mapping added after the last deploy, so the /blog copy is never served.
-  const legacyUrl = entry.kind === 'article' ? (entry.article as {legacyUrl?: string}).legacyUrl : undefined
-  if (legacyUrl) permanentRedirect(legacyUrl)
+  // A migrated article, or a listicle published at an old-folder URL, lives at
+  // that URL; next.config.ts sends the 301. This covers a mapping added after the
+  // last deploy, so the /blog copy is never served.
+  const legacyUrl = (entry.kind === 'article' ? entry.article : entry.page) as {legacyUrl?: string}
+  if (legacyUrl.legacyUrl) permanentRedirect(legacyUrl.legacyUrl)
 
   // Both types share the global chrome + Related Posts. Informational articles
   // carry the sticky author/booking card as a right column inside the template;
   // listicles keep their full-width content and get the About-the-Author section
   // at the bottom instead (the right card was cramping the comparison tables).
-  if (entry.kind === 'listicle') {
-    return (
-      <>
-        <JsonLd data={listicleJsonLd({...(entry.page as Record<string, unknown>), slug} as Parameters<typeof listicleJsonLd>[0])} />
-        <SiteHeader />
-        <ListicleTemplate page={entry.page} />
-        <AboutAuthor />
-        <RelatedPosts slug={slug} />
-        <SiteFooter />
-      </>
-    )
-  }
+  if (entry.kind === 'listicle') return <ListicleView page={entry.page} slug={slug} url={blogUrl(slug)} />
 
   return (
     <>

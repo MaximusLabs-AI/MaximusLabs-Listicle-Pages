@@ -44,11 +44,18 @@ maximuslabs.ai/blog/*      ->      Cloudflare Worker (thin reverse proxy)
 
 4. **Add the routes** to the worker (Worker > Settings > Domains & Routes), all
    on the maximuslabs.ai zone:
-   - `www.maximuslabs.ai/blog`
-   - `www.maximuslabs.ai/blog/*`
+   - `www.maximuslabs.ai/blog*` (one route for `/blog`, `/blog?utm_...` and all
+     of `/blog/`; an exact `/blog` route misses the page once a query string is
+     added, and Webflow then serves its 404)
    - `www.maximuslabs.ai/_next/*`
    - `www.maximuslabs.ai/icon.svg`
    - `www.maximuslabs.ai/apple-icon`
+   - One route per listicle published at an old-folder URL, ending in `*`, e.g.
+     `www.maximuslabs.ai/answer-engine-optimizations/b2b-saas-aeo-geo-agencies*`.
+     Set the listicle's Canonical URL (`canonical_url` in the workbook) to that
+     address first. Never add a whole-folder route such as
+     `/answer-engine-optimizations/*`: the migrated articles there must keep
+     coming from Webflow.
 
    (If the canonical host is the apex `maximuslabs.ai`, add the same patterns for
    it too, or ensure www<->apex redirects run before the worker.)
