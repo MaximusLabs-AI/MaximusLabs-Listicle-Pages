@@ -10,8 +10,9 @@ type Props = {params: Promise<{slug: string}>}
 type ListiclePage = Record<string, unknown> & {slug?: string}
 
 // Serves a listicle at an old Webflow-folder URL, when its Canonical URL in Sanity
-// is that address. The Cloudflare worker sends only the addresses that have their
-// own route to this app, so every other page in these folders stays on Webflow.
+// is that address. The Cloudflare worker sends only the addresses on the routing
+// list (app/api/legacy-routes) to this app; every other page in these folders
+// stays on Webflow.
 export function legacyListicleRoute(folder: 'answer-engine-optimizations' | 'generative-engine-optimization') {
   async function load(slug: string) {
     const url = `${SITE}/${folder}/${slug}`

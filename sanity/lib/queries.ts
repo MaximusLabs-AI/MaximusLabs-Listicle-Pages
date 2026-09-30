@@ -99,3 +99,13 @@ export const listiclePageQuery = defineQuery(`
 export const listicleByUrlQuery = defineQuery(`
   *[_type == "listiclePage" && canonicalUrl == $url][0] ${listicleProjection}
 `)
+
+// Every page with an old-folder URL, for the Cloudflare worker's routing list
+// (app/api/legacy-routes). Same legacyUrl rule as the cards and redirects.
+export const legacyRoutesQuery = defineQuery(`
+  *[_type in ["infoArticle", "listiclePage"] && defined(slug.current)]{
+    _type,
+    "slug": slug.current,
+    "url": ${legacyUrl}
+  }[defined(url)]
+`)

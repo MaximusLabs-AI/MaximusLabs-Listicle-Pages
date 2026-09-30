@@ -50,12 +50,15 @@ maximuslabs.ai/blog/*      ->      Cloudflare Worker (thin reverse proxy)
    - `www.maximuslabs.ai/_next/*`
    - `www.maximuslabs.ai/icon.svg`
    - `www.maximuslabs.ai/apple-icon`
-   - One route per listicle published at an old-folder URL, ending in `*`, e.g.
-     `www.maximuslabs.ai/answer-engine-optimizations/b2b-saas-aeo-geo-agencies*`.
-     Set the listicle's Canonical URL (`canonical_url` in the workbook) to that
-     address first. Never add a whole-folder route such as
-     `/answer-engine-optimizations/*`: the migrated articles there must keep
-     coming from Webflow.
+   - `www.maximuslabs.ai/answer-engine-optimizations/*`
+   - `www.maximuslabs.ai/generative-engine-optimization/*`
+
+   The two folder routes let a listicle take over an old Webflow address with
+   no Cloudflare change: set its Canonical URL in Sanity to that address and
+   publish. The worker reads the app's routing list (`/api/legacy-routes`,
+   cached 60 seconds) and serves only the addresses on it from the app; every
+   other page in those folders, including the migrated articles, stays on
+   Webflow. If the list cannot be read, the whole folder stays on Webflow.
 
    (If the canonical host is the apex `maximuslabs.ai`, add the same patterns for
    it too, or ensure www<->apex redirects run before the worker.)
