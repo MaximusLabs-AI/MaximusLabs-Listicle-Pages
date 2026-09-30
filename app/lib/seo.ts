@@ -143,7 +143,7 @@ export function collectionJsonLd(items: Array<{slug: string; href?: string}>) {
           itemListElement: items.slice(0, 25).map((it, i) => ({
             '@type': 'ListItem',
             position: i + 1,
-            url: it.href ? `${SITE}${it.href}` : blogUrl(it.slug),
+            url: it.href?.startsWith('http') ? it.href : it.href ? `${SITE}${it.href}` : blogUrl(it.slug),
           })),
         },
       },

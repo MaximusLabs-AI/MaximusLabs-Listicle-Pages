@@ -1,5 +1,13 @@
 import {defineQuery} from 'next-sanity'
 
+// Informational articles migrated from Webflow keep their original URL
+// (/answer-engine-optimizations/*, /generative-engine-optimization/*) as the
+// canonical one, because that URL carries the ranking history. Their /blog copy
+// 301s there and every card links straight to it. Listicles have no older URL,
+// and an article whose sourceUrl is already /blog stays on /blog.
+// next.config.ts repeats this filter to build the 301 list; keep them in step.
+const legacyUrl = `select(_type == "infoArticle" && defined(sourceUrl) && !string::startsWith(sourceUrl, "https://www.maximuslabs.ai/blog/") => sourceUrl)`
+
 export const listicleIndexQuery = defineQuery(`
   *[_type == "listiclePage"] | order(publishedAt desc) {
     _id,
@@ -28,7 +36,7 @@ export const blogCollectionQuery = defineQuery(`
     contentCategory,
     "imageUrl": coalesce(coverImage.asset->url, openGraphImage.asset->url, coverImageUrl),
     "agencyCount": count(entries),
-    "href": "/blog/" + slug.current
+    "href": coalesce(${legacyUrl}, "/blog/" + slug.current)
   }
 `)
 
@@ -36,6 +44,7 @@ export const infoArticleQuery = defineQuery(`
   *[_type == "infoArticle" && slug.current == $slug][0] {
     ...,
     "slug": slug.current,
+    "legacyUrl": ${legacyUrl},
     "imageUrl": coalesce(coverImage.asset->url, coverImageUrl)
   }
 `)
